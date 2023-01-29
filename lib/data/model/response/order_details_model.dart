@@ -5,6 +5,7 @@ class OrderDetailsModel {
   double price;
   ItemDetails itemDetails;
   List<Variations> variation;
+  List<FoodVariation> foodVariation;
   List<AddOn> addOns;
   double discountOnItem;
   String discountType;
@@ -22,6 +23,7 @@ class OrderDetailsModel {
         this.orderId,
         this.price,
         this.itemDetails,
+        this.foodVariation,
         this.variation,
         this.addOns,
         this.discountOnItem,
@@ -39,14 +41,19 @@ class OrderDetailsModel {
     itemId = json['item_id'];
     orderId = json['order_id'];
     price = json['price'].toDouble();
-    itemDetails = json['item_details'] != null
-        ? new ItemDetails.fromJson(json['item_details'])
-        : null;
-    if (json['variation'] != null) {
-      variation = [];
-      json['variation'].forEach((v) {
-        variation.add(new Variations.fromJson(v));
-      });
+    itemDetails = json['item_details'] != null ? new ItemDetails.fromJson(json['item_details']) : null;
+    variation = [];
+    foodVariation = [];
+    if (json['variation'] != null && json['variation'].isNotEmpty) {
+      if(json['variation'][0]['values'] != null) {
+        json['variation'].forEach((v) {
+          foodVariation.add(FoodVariation.fromJson(v));
+        });
+      }else {
+        json['variation'].forEach((v) {
+          variation.add(Variations.fromJson(v));
+        });
+      }
     }
     if (json['add_ons'] != null) {
       addOns = [];
@@ -76,6 +83,8 @@ class OrderDetailsModel {
     }
     if (this.variation != null) {
       data['variation'] = this.variation.map((v) => v.toJson()).toList();
+    }else if(this.foodVariation != null) {
+      data['variation'] = this.foodVariation.map((v) => v.toJson()).toList();
     }
     if (this.addOns != null) {
       data['add_ons'] = this.addOns.map((v) => v.toJson()).toList();
@@ -123,6 +132,7 @@ class ItemDetails {
   String image;
   List<CategoryIds> categoryIds;
   List<Variations> variations;
+  List<FoodVariation> foodVariations;
   List<AddOns> addOns;
   List<ChoiceOptions> choiceOptions;
   double price;
@@ -149,6 +159,7 @@ class ItemDetails {
         this.image,
         this.categoryIds,
         this.variations,
+        this.foodVariations,
         this.addOns,
         this.choiceOptions,
         this.price,
@@ -179,10 +190,15 @@ class ItemDetails {
         categoryIds.add(new CategoryIds.fromJson(v));
       });
     }
-    if (json['variations'] != null) {
+    if(json['food_variations'] != null && json['food_variations'] is !String) {
+      foodVariations = [];
+      json['food_variations'].forEach((v) {
+        foodVariations.add(FoodVariation.fromJson(v));
+      });
+    }else if(json['variations'] != null) {
       variations = [];
       json['variations'].forEach((v) {
-        variations.add(new Variations.fromJson(v));
+        variations.add(Variations.fromJson(v));
       });
     }
     if (json['add_ons'] != null) {
@@ -224,7 +240,9 @@ class ItemDetails {
     if (this.categoryIds != null) {
       data['category_ids'] = this.categoryIds.map((v) => v.toJson()).toList();
     }
-    if (this.variations != null) {
+    if(this.foodVariations != null) {
+      data['food_variations'] = this.foodVariations.map((v) => v.toJson()).toList();
+    }else if(this.variations != null) {
       data['variations'] = this.variations.map((v) => v.toJson()).toList();
     }
     if (this.addOns != null) {
@@ -329,6 +347,63 @@ class ChoiceOptions {
     data['name'] = this.name;
     data['title'] = this.title;
     data['options'] = this.options;
+    return data;
+  }
+}
+
+class FoodVariation {
+  String name;
+  String type;
+  String min;
+  String max;
+  String required;
+  List<VariationValue> variationValues;
+
+  FoodVariation({this.name, this.type, this.min, this.max, this.required, this.variationValues});
+
+  FoodVariation.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    type = json['type'];
+    min = json['min'].toString();
+    max = json['max'].toString();
+    required = json['required'];
+    if (json['values'] != null) {
+      variationValues = [];
+      json['values'].forEach((v) {
+        variationValues.add(new VariationValue.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['type'] = this.type;
+    data['min'] = this.min;
+    data['max'] = this.max;
+    data['required'] = this.required;
+    if (this.variationValues != null) {
+      data['values'] = this.variationValues.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class VariationValue {
+  String level;
+  String optionPrice;
+
+  VariationValue({this.level, this.optionPrice});
+
+  VariationValue.fromJson(Map<String, dynamic> json) {
+    level = json['label'];
+    optionPrice = json['optionPrice'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['label'] = this.level;
+    data['optionPrice'] = this.optionPrice;
     return data;
   }
 }

@@ -32,8 +32,16 @@ class OrderItemWidget extends StatelessWidget {
       }else {
         _variationText = orderDetails.itemDetails.variations[0].type;
       }
+    }else if(orderDetails.foodVariation.length > 0) {
+      for(FoodVariation variation in orderDetails.foodVariation) {
+        _variationText += '${_variationText.isNotEmpty ? ', ' : ''}${variation.name} (';
+        for(VariationValue value in variation.variationValues) {
+          _variationText += '${_variationText.endsWith('(') ? '' : ', '}${value.level}';
+        }
+        _variationText += ')';
+      }
     }
-    
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         ClipRRect(
@@ -105,7 +113,7 @@ class OrderItemWidget extends StatelessWidget {
         ]),
       ) : SizedBox(),
 
-      orderDetails.itemDetails.variations.length > 0 ? Padding(
+      _variationText.isNotEmpty ? Padding(
         padding: EdgeInsets.only(top: Dimensions.PADDING_SIZE_EXTRA_SMALL),
         child: Row(children: [
           SizedBox(width: 60),
