@@ -3,7 +3,7 @@ import 'package:sixam_mart_delivery/util/images.dart';
 
 class AppConstants {
   static const String APP_NAME = 'LavaGo a domicilio';
-  static const double APP_VERSION = 1.7;
+  static const double APP_VERSION = 2.0;
 
   static const String BASE_URL = 'https://socio.lavago.app';
   static const String CONFIG_URI = '/api/v1/config';
