@@ -9,6 +9,7 @@ import 'package:sixam_mart_delivery/data/model/body/record_location_body.dart';
 import 'package:sixam_mart_delivery/data/model/response/address_model.dart';
 import 'package:sixam_mart_delivery/data/model/response/profile_model.dart';
 import 'package:sixam_mart_delivery/data/model/response/response_model.dart';
+import 'package:sixam_mart_delivery/data/model/response/vehicle_model.dart';
 import 'package:sixam_mart_delivery/data/model/response/zone_model.dart';
 import 'package:sixam_mart_delivery/data/model/response/zone_response_model.dart';
 import 'package:sixam_mart_delivery/data/repository/auth_repo.dart';
@@ -22,7 +23,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geocoding/geocoding.dart' as GeoCoding;
-import 'package:location/location.dart';
 
 class AuthController extends GetxController implements GetxService {
   final AuthRepo authRepo;
@@ -35,7 +35,6 @@ class AuthController extends GetxController implements GetxService {
   ProfileModel _profileModel;
   XFile _pickedFile;
   Timer _timer;
-  Location _location = Location();
 
   XFile _pickedImage;
   List<XFile> _pickedIdentities = [];
@@ -52,6 +51,9 @@ class AuthController extends GetxController implements GetxService {
   bool _loading = false;
   bool _inZone = false;
   int _zoneID = 0;
+  List<VehicleModel> _vehicles;
+  List<int> _vehicleIds;
+  int _vehicleIndex = 0;
 
   bool get isLoading => _isLoading;
   bool get notification => _notification;
@@ -73,6 +75,9 @@ class AuthController extends GetxController implements GetxService {
   bool get loading => _loading;
   bool get inZone => _inZone;
   int get zoneID => _zoneID;
+  List<VehicleModel> get vehicles => _vehicles;
+  List<int> get vehicleIds => _vehicleIds;
+  int get vehicleIndex => _vehicleIndex;
 
   Future<ResponseModel> login(String phone, String password) async {
     _isLoading = true;
@@ -80,7 +85,7 @@ class AuthController extends GetxController implements GetxService {
     Response response = await authRepo.login(phone, password);
     ResponseModel responseModel;
     if (response.statusCode == 200) {
-      authRepo.saveUserToken(response.body['token'], response.body['zone_wise_topic']);
+      authRepo.saveUserToken(response.body['token'], response.body['topic']);
       await authRepo.updateToken();
       responseModel = ResponseModel(true, 'successful');
     } else {
@@ -120,6 +125,28 @@ class AuthController extends GetxController implements GetxService {
     }
     update();
   }
+  Future<void> getVehicleList() async {
+    Response response = await authRepo.getVehicleList();
+    if (response.statusCode == 200) {
+      _vehicles = [];
+      _vehicleIds = [];
+      _vehicleIds.add(0);
+      response.body.forEach((vehicle) => _vehicles.add(VehicleModel.fromJson(vehicle)));
+      response.body.forEach((vehicle) => _vehicleIds.add(VehicleModel.fromJson(vehicle).id));
+
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    update();
+  }
+
+  void setVehicleIndex(int index, bool notify) {
+    _vehicleIndex = index;
+    if(notify) {
+      update();
+    }
+  }
+
 
   Future<bool> updateUserInfo(ProfileModel updateUserModel, String token) async {
     _isLoading = true;
@@ -198,7 +225,7 @@ class AuthController extends GetxController implements GetxService {
   }
 
   void startLocationRecord() {
-    _location.enableBackgroundMode(enable: true);
+    // _location.enableBackgroundMode(enable: true);
     _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 10), (timer) {
       recordLocation();
@@ -206,12 +233,12 @@ class AuthController extends GetxController implements GetxService {
   }
 
   void stopLocationRecord() {
-    _location.enableBackgroundMode(enable: false);
+    // _location.enableBackgroundMode(enable: false);
     _timer?.cancel();
   }
 
   Future<void> recordLocation() async {
-    final LocationData _locationResult = await _location.getLocation();
+    final Position _locationResult = await Geolocator.getCurrentPosition();
     print('This is current Location: Latitude: ${_locationResult.latitude} Longitude: ${_locationResult.longitude}');
     String _address;
     try{

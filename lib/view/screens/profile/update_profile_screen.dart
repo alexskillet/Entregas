@@ -143,7 +143,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   ),
                   SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
                   Text('(${'non_changeable'.tr})', style: robotoRegular.copyWith(
-                    fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL, color: Theme.of(context).errorColor,
+                    fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL, color: Theme.of(context).colorScheme.error,
                   )),
                 ]),
                 SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_SMALL),

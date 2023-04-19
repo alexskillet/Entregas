@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class PaginatedOrderModel {
   int totalSize;
   String limit;
@@ -59,7 +61,8 @@ class OrderModel {
   String storePhone;
   int detailsCount;
   String orderNote;
-  String orderAttachment;
+  bool prescriptionOrder;
+  List<String> orderAttachment;
   String chargePayer;
   String moduleType;
   DeliveryAddress deliveryAddress;
@@ -96,6 +99,7 @@ class OrderModel {
         this.storePhone,
         this.detailsCount,
         this.chargePayer,
+        this.prescriptionOrder,
         this.orderAttachment,
         this.orderNote,
         this.moduleType,
@@ -136,7 +140,18 @@ class OrderModel {
     orderNote = json['order_note'];
     chargePayer = json['charge_payer'];
     moduleType = json['module_type'];
-    orderAttachment = json['order_attachment'];
+    prescriptionOrder = json['prescription_order'];
+    if (json['order_attachment'] != null) {
+      if(json['order_attachment'].toString().startsWith('["')){
+        orderAttachment = [];
+        jsonDecode(json['order_attachment']).forEach((v) {
+          orderAttachment.add(v);
+        });
+      }else{
+        orderAttachment = [];
+        orderAttachment.add(json['order_attachment']);
+      }
+    }
     deliveryAddress = json['delivery_address'] != null ? new DeliveryAddress.fromJson(json['delivery_address']) : null;
     receiverDetails = json['receiver_details'] != null ? new DeliveryAddress.fromJson(json['receiver_details']) : null;
     parcelCategory = json['parcel_category'] != null ? new ParcelCategory.fromJson(json['parcel_category']) : null;
@@ -172,6 +187,7 @@ class OrderModel {
     data['store_logo'] = this.storeLogo;
     data['store_phone'] = this.storePhone;
     data['details_count'] = this.detailsCount;
+    data['prescription_order'] = this.prescriptionOrder;
     data['order_attachment'] = this.orderAttachment;
     data['order_attachment'] = this.chargePayer;
     data['order_note'] = this.orderNote;

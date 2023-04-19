@@ -49,14 +49,14 @@ class HomeScreen extends StatelessWidget {
         ),
         titleSpacing: 0, elevation: 0,
         title: Text(AppConstants.APP_NAME, maxLines: 1, overflow: TextOverflow.ellipsis, style: robotoMedium.copyWith(
-          color: Theme.of(context).textTheme.bodyText1.color, fontSize: Dimensions.FONT_SIZE_DEFAULT,
+          color: Theme.of(context).textTheme.bodyLarge.color, fontSize: Dimensions.FONT_SIZE_DEFAULT,
         )),
         actions: [
           IconButton(
             icon: GetBuilder<NotificationController>(builder: (notificationController) {
 
               return Stack(children: [
-                Icon(Icons.notifications, size: 25, color: Theme.of(context).textTheme.bodyText1.color),
+                Icon(Icons.notifications, size: 25, color: Theme.of(context).textTheme.bodyLarge.color),
                 notificationController.hasNotification ? Positioned(top: 0, right: 0, child: Container(
                   height: 10, width: 10, decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor, shape: BoxShape.circle,
@@ -203,7 +203,7 @@ class HomeScreen extends StatelessWidget {
                 )),
                 SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
                 Expanded(child: CountCard(
-                  title: 'this_week_orders'.tr, backgroundColor: Theme.of(context).errorColor, height: 180,
+                  title: 'this_week_orders'.tr, backgroundColor: Theme.of(context).colorScheme.error, height: 180,
                   value: authController.profileModel != null ? authController.profileModel.thisWeekOrderCount.toString() : null,
                 )),
               ]),

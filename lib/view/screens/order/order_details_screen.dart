@@ -17,6 +17,7 @@ import 'package:sixam_mart_delivery/view/base/custom_app_bar.dart';
 import 'package:sixam_mart_delivery/view/base/custom_button.dart';
 import 'package:sixam_mart_delivery/view/base/custom_image.dart';
 import 'package:sixam_mart_delivery/view/base/custom_snackbar.dart';
+import 'package:sixam_mart_delivery/view/screens/order/widget/cancellation_dialogue.dart';
 import 'package:sixam_mart_delivery/view/screens/order/widget/order_item_widget.dart';
 import 'package:sixam_mart_delivery/view/screens/order/widget/verify_delivery_sheet.dart';
 import 'package:sixam_mart_delivery/view/screens/order/widget/info_card.dart';
@@ -304,22 +305,19 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               || (_parcel && _accepted && _cancelPermission)) ? Row(children: [
 
                 Expanded(child: TextButton(
-                  onPressed: () => Get.dialog(ConfirmationDialog(
-                    icon: Images.warning, title: 'are_you_sure_to_cancel'.tr,
-                    description: _parcel ? 'you_want_to_cancel_this_delivery'.tr : 'you_want_to_cancel_this_order'.tr,
-                    onYesPressed: () {
-                      orderController.updateOrderStatus(controllerOrderModel, AppConstants.CANCELED, back: true);
-                    },
-                  ), barrierDismissible: false),
+                  onPressed: () {
+                    orderController.setOrderCancelReason('');
+                    Get.dialog(CancellationDialogue(orderId: widget.orderId));
+                  },
                   style: TextButton.styleFrom(
                     minimumSize: Size(1170, 40), padding: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
-                      side: BorderSide(width: 1, color: Theme.of(context).textTheme.bodyText1.color),
+                      side: BorderSide(width: 1, color: Theme.of(context).textTheme.bodyLarge.color),
                     ),
                   ),
                   child: Text('cancel'.tr, textAlign: TextAlign.center, style: robotoRegular.copyWith(
-                    color: Theme.of(context).textTheme.bodyText1.color,
+                    color: Theme.of(context).textTheme.bodyLarge.color,
                     fontSize: Dimensions.FONT_SIZE_LARGE,
                   )),
                 )),
@@ -342,6 +340,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ]) : SliderButton(
                 action: () {
 
+                  print('---1--> : ${(_cod && _accepted && !_restConfModel && !_selfDelivery) || (_parcel && _accepted)}');
+                  print('---2--->  $_pickedUp');
+                  print('---2(1)--->  ${_parcel && _cod && controllerOrderModel.chargePayer != 'sender'}');
+                  print('---2(2)--->  ${(Get.find<SplashController>().configModel.orderDeliveryVerification || _cod) && !_parcel}');
+                  print('---3--->  ${_parcel && controllerOrderModel.chargePayer == 'sender' && _cod}');
+                  print('---4--->  $_handover');
                   if((_cod && _accepted && !_restConfModel && !_selfDelivery) || (_parcel && _accepted)) {
 
                     if(orderController.isLoading){
@@ -370,7 +374,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         currentOrderModel: controllerOrderModel, verify: Get.find<SplashController>().configModel.orderDeliveryVerification,
                         orderAmount: controllerOrderModel.orderAmount, cod: _cod,
                       ), isScrollControlled: true);
-                    } else {
+                    }
+                    else if(!_cod && _parcel && controllerOrderModel.chargePayer == 'sender'){
+                      Get.bottomSheet(VerifyDeliverySheet(
+                        currentOrderModel: controllerOrderModel, verify: Get.find<SplashController>().configModel.orderDeliveryVerification,
+                        orderAmount: controllerOrderModel.orderAmount, cod: _cod,
+                      ), isScrollControlled: true);
+                    }
+                    else {
                       Get.find<OrderController>().updateOrderStatus(controllerOrderModel, AppConstants.DELIVERED);
                     }
                   }
@@ -378,7 +389,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   else if(_parcel && controllerOrderModel.chargePayer == 'sender' && _cod){
                     Get.bottomSheet(VerifyDeliverySheet(
                       currentOrderModel: controllerOrderModel, verify: Get.find<SplashController>().configModel.orderDeliveryVerification,
-                      orderAmount: controllerOrderModel.orderAmount, cod: _cod, isSenderPay: true,
+                      orderAmount: controllerOrderModel.orderAmount, cod: _cod, isSenderPay: true, isParcel: _parcel,
                     ), isScrollControlled: true);
                   }
 

@@ -55,7 +55,7 @@ class _ForgetPassScreenState extends State<ForgetPassScreen> {
                 padding: EdgeInsets.zero,
                 showFlagMain: true,
                 textStyle: robotoRegular.copyWith(
-                  fontSize: Dimensions.FONT_SIZE_LARGE, color: Theme.of(context).textTheme.bodyText1.color,
+                  fontSize: Dimensions.FONT_SIZE_LARGE, color: Theme.of(context).textTheme.bodyLarge.color,
                 ),
               ),
               Expanded(child: CustomTextField(

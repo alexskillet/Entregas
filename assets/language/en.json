@@ -250,5 +250,13 @@
   "chat": "Chat",
   "no_parcel_category_data_found": "No parcel category data found",
   "you_do_not_send_more_then_3_photos": "You do not send more then 3 photos",
-  "receiver_location": "Receiver Location"
+  "receiver_location": "Receiver Location",
+  "vehicle_type": "Vehicle Type",
+  "please_select_vehicle_for_the_deliveryman": "Please select vehicle for the deliveryman",
+  "your_app_is_deprecated": "Your app is deprecated",
+  "update_now": "Update Now",
+  "select_cancellation_reasons": "Select Cancellation Reasons",
+  "no_reasons_available": "No reasons available",
+  "you_did_not_select_select_any_reason": "You did not select select any reason",
+  "select": "Select"
 }

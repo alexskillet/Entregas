@@ -68,11 +68,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         //_orderCount = _orderCount + 1;
         Get.find<OrderController>().getCurrentOrders();
         Get.find<OrderController>().getLatestOrders();
-        Get.dialog(NewRequestDialog(isRequest: true, onTap: () => _navigateRequestPage()));
+        Get.dialog(NewRequestDialog(isRequest: true, onTap: () => _navigateRequestPage(), orderId: int.parse(message.data['order_id'].toString())));
       }else if(_type == 'assign' && _orderID != null && _orderID.isNotEmpty) {
         Get.find<OrderController>().getCurrentOrders();
         Get.find<OrderController>().getLatestOrders();
-        Get.dialog(NewRequestDialog(isRequest: false, onTap: () {
+        Get.dialog(NewRequestDialog(isRequest: false, orderId: int.parse(message.data['order_id'].toString()), onTap: () {
           // _setPage(0);
           Get.offAllNamed(RouteHelper.getOrderDetailsRoute(int.parse(_orderID), fromNotification: true));
         }));

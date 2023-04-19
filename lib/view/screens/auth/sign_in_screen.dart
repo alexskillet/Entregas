@@ -3,7 +3,6 @@ import 'package:sixam_mart_delivery/controller/auth_controller.dart';
 import 'package:sixam_mart_delivery/controller/localization_controller.dart';
 import 'package:sixam_mart_delivery/controller/splash_controller.dart';
 import 'package:sixam_mart_delivery/helper/route_helper.dart';
-import 'package:sixam_mart_delivery/util/app_constants.dart';
 import 'package:sixam_mart_delivery/util/dimensions.dart';
 import 'package:sixam_mart_delivery/util/images.dart';
 import 'package:sixam_mart_delivery/util/styles.dart';
@@ -14,7 +13,6 @@ import 'package:sixam_mart_delivery/view/screens/auth/widget/code_picker_widget.
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:phone_number/phone_number.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class SignInScreen extends StatelessWidget {
   final FocusNode _phoneFocus = FocusNode();
@@ -71,7 +69,7 @@ class SignInScreen extends StatelessWidget {
                             dialogBackgroundColor: Theme.of(context).cardColor,
                             flagWidth: 30,
                             textStyle: robotoRegular.copyWith(
-                              fontSize: Dimensions.FONT_SIZE_LARGE, color: Theme.of(context).textTheme.bodyText1.color,
+                              fontSize: Dimensions.FONT_SIZE_LARGE, color: Theme.of(context).textTheme.bodyLarge.color,
                             ),
                           ),
                           Expanded(child: CustomTextField(
@@ -138,7 +136,7 @@ class SignInScreen extends StatelessWidget {
                       },
                       child: RichText(text: TextSpan(children: [
                         TextSpan(text: '${'join_as_a'.tr} ', style: robotoRegular.copyWith(color: Theme.of(context).disabledColor)),
-                        TextSpan(text: 'delivery_man'.tr, style: robotoMedium.copyWith(color: Theme.of(context).textTheme.bodyText1.color)),
+                        TextSpan(text: 'delivery_man'.tr, style: robotoMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge.color)),
                       ])),
                     ) : SizedBox(),
 

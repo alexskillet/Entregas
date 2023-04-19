@@ -3,7 +3,7 @@ import 'package:sixam_mart_delivery/util/images.dart';
 
 class AppConstants {
   static const String APP_NAME = 'LavaGo a domicilio';
-  static const double APP_VERSION = 2.0;
+  static const double APP_VERSION = 2.1;
 
   static const String BASE_URL = 'https://socio.lavago.app';
   static const String CONFIG_URI = '/api/v1/config';
@@ -32,6 +32,8 @@ class AppConstants {
   static const String ZONE_LIST_URI = '/api/v1/zone/list';
   static const String ZONE_URI = '/api/v1/config/get-zone-id';
   static const String CURRENT_ORDER_URI = '/api/v1/delivery-man/order?token=';
+  static const String VEHICLES_URI = '/api/v1/get-vehicles';
+  static const String ORDER_CANCELLATION_URI = '/api/v1/customer/order/cancellation-reasons';
 
   //chat url
   static const String GET_CONVERSATION_LIST = '/api/v1/delivery-man/message/list';
@@ -53,6 +55,7 @@ class AppConstants {
   static const String IGNORE_LIST = 'sixam_mart_delivery_ignore_list';
   static const String TOPIC = 'all_zone_delivery_man';
   static const String ZONE_TOPIC = 'zone_topic';
+  // static const String VEHICLE_WISE_TOPIC = 'vehicle_wise_topic';
   static const String LOCALIZATION_KEY = 'X-localization';
   static const String LANG_INTRO = 'language_intro';
 

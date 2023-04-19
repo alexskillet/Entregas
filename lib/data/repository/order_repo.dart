@@ -79,4 +79,8 @@ class OrderRepo extends GetxService {
     return apiClient.getData('${AppConstants.CURRENT_ORDER_URI}${getUserToken()}&order_id=$orderId');
   }
 
+  Future<Response> getCancelReasons() async {
+    return await apiClient.getData('${AppConstants.ORDER_CANCELLATION_URI}?offset=1&limit=30&type=deliveryman');
+  }
+
 }

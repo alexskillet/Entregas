@@ -64,6 +64,7 @@ class AuthRepo {
     if(!GetPlatform.isWeb) {
       FirebaseMessaging.instance.subscribeToTopic(AppConstants.TOPIC);
       FirebaseMessaging.instance.subscribeToTopic(sharedPreferences.getString(AppConstants.ZONE_TOPIC));
+      // FirebaseMessaging.instance.subscribeToTopic(sharedPreferences.getString(AppConstants.VEHICLE_WISE_TOPIC));
     }
     return await apiClient.postData(AppConstants.TOKEN_URI, {"_method": "put", "token": getUserToken(), "fcm_token": _deviceToken});
   }
@@ -94,10 +95,12 @@ class AuthRepo {
     );
   }
 
-  Future<bool> saveUserToken(String token, String zoneTopic) async {
+  Future<bool> saveUserToken(String token, String zoneTopic/*, String vehicleWiseTopic*/) async {
     apiClient.token = token;
     apiClient.updateHeader(token, sharedPreferences.getString(AppConstants.LANGUAGE_CODE));
     sharedPreferences.setString(AppConstants.ZONE_TOPIC, zoneTopic);
+    // sharedPreferences.setString(AppConstants.VEHICLE_WISE_TOPIC, vehicleWiseTopic);
+
     return await sharedPreferences.setString(AppConstants.TOKEN, token);
   }
 
@@ -113,6 +116,7 @@ class AuthRepo {
     if(!GetPlatform.isWeb) {
       await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.TOPIC);
       FirebaseMessaging.instance.unsubscribeFromTopic(sharedPreferences.getString(AppConstants.ZONE_TOPIC));
+      // FirebaseMessaging.instance.unsubscribeFromTopic(sharedPreferences.getString(AppConstants.VEHICLE_WISE_TOPIC));
       apiClient.postData(AppConstants.TOKEN_URI, {"_method": "put", "token": getUserToken(), "fcm_token": '@'});
     }
     await sharedPreferences.remove(AppConstants.TOKEN);
@@ -155,6 +159,7 @@ class AuthRepo {
       if(!GetPlatform.isWeb) {
         FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.TOPIC);
         FirebaseMessaging.instance.unsubscribeFromTopic(sharedPreferences.getString(AppConstants.ZONE_TOPIC));
+        // FirebaseMessaging.instance.unsubscribeFromTopic(sharedPreferences.getString(AppConstants.VEHICLE_WISE_TOPIC));
       }
     }
     sharedPreferences.setBool(AppConstants.NOTIFICATION, isActive);
@@ -192,6 +197,10 @@ class AuthRepo {
 
   Future<Response> registerDeliveryMan(DeliveryManBody deliveryManBody, List<MultipartBody> multiParts) async {
     return apiClient.postMultipartData(AppConstants.DM_REGISTER_URI, deliveryManBody.toJson(), multiParts);
+  }
+
+  Future<Response> getVehicleList() async {
+    return await apiClient.getData(AppConstants.VEHICLES_URI);
   }
 
 }

@@ -117,11 +117,11 @@ class OrderRequestWidget extends StatelessWidget {
                 minimumSize: Size(1170, 40), padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
-                  side: BorderSide(width: 1, color: Theme.of(context).textTheme.bodyText1.color),
+                  side: BorderSide(width: 1, color: Theme.of(context).textTheme.bodyLarge.color),
                 ),
               ),
               child: Text('ignore'.tr, textAlign: TextAlign.center, style: robotoRegular.copyWith(
-                color: Theme.of(context).textTheme.bodyText1.color,
+                color: Theme.of(context).textTheme.bodyLarge.color,
                 fontSize: Dimensions.FONT_SIZE_LARGE,
               )),
             )),

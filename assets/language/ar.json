@@ -202,6 +202,7 @@
   "your_account_remove_successfully": "تمت إزالة حسابك بنجاح",
   "there_is_a_problem_on_removing_your_account": "هناك مشكلة في إزالة حسابك",
   "remove_account": "إزالة الحساب",
+  "delete_account": "حذف الحساب",
   "are_you_sure_to_delete_account": "هل أنت متأكد من حذف حسابك?",
   "it_will_remove_your_all_information": "سوف يزيل كل المعلومات الخاصة بك.",
   "no_store_data_found": "لم يتم العثور على بيانات مطعم",
@@ -250,5 +251,10 @@
   "chat": "دردشة",
   "no_parcel_category_data_found": "لم يتم العثور على بيانات فئة الطرد",
   "you_do_not_send_more_then_3_photos": "لا ترسل أكثر من 3 صور",
-  "receiver_location": "موقع المتلقي"
+  "receiver_location": "موقع المتلقي",
+  "vehicle_type": "نوع السيارة",
+  "please_select_vehicle_for_the_deliveryman": "الرجاء تحديد السيارة لرجل التوصيل",
+  "your_app_is_deprecated": "تم إيقاف تطبيقك",
+  "update_now": "تحديث الان",
+  "select": "يختار"
 }

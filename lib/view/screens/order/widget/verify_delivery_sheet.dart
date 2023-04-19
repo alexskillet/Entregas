@@ -17,7 +17,8 @@ class VerifyDeliverySheet extends StatelessWidget {
   final bool cod;
   final double orderAmount;
   final bool isSenderPay;
-  VerifyDeliverySheet({@required this.currentOrderModel, @required this.verify, @required this.orderAmount, @required this.cod, this.isSenderPay = false});
+  final bool isParcel;
+  VerifyDeliverySheet({@required this.currentOrderModel, @required this.verify, @required this.orderAmount, @required this.cod, this.isSenderPay = false, this.isParcel = false});
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +93,7 @@ class VerifyDeliverySheet extends StatelessWidget {
               buttonText: verify ? 'verify'.tr : 'ok'.tr,
               margin: EdgeInsets.only(bottom: Dimensions.PADDING_SIZE_LARGE),
               onPressed: () {
-                Get.find<OrderController>().updateOrderStatus(currentOrderModel, isSenderPay ? 'picked_up' : 'delivered').then((success) {
+                Get.find<OrderController>().updateOrderStatus(currentOrderModel, isSenderPay ? 'picked_up' : 'delivered', parcel: isParcel).then((success) {
                   if(success) {
                     Get.find<AuthController>().getProfile();
                     Get.find<OrderController>().getCurrentOrders();

@@ -140,7 +140,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                       showCustomSnackBar('${_type.tr} ${'not_found'.tr}');
                                     }
                                   },
-                                  highlightColor: Theme.of(context).backgroundColor.withOpacity(0.1),
+                                  highlightColor: Theme.of(context).colorScheme.background.withOpacity(0.1),
                                   radius: Dimensions.RADIUS_SMALL,
                                   child: Stack(children: [
                                     Padding(

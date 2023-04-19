@@ -4,6 +4,7 @@ import 'package:sixam_mart_delivery/data/api/api_checker.dart';
 import 'package:sixam_mart_delivery/data/model/body/record_location_body.dart';
 import 'package:sixam_mart_delivery/data/model/body/update_status_body.dart';
 import 'package:sixam_mart_delivery/data/model/response/ignore_model.dart';
+import 'package:sixam_mart_delivery/data/model/response/order_cancellation_body.dart';
 import 'package:sixam_mart_delivery/data/model/response/order_details_model.dart';
 import 'package:sixam_mart_delivery/data/model/response/order_model.dart';
 import 'package:sixam_mart_delivery/data/repository/order_repo.dart';
@@ -34,6 +35,8 @@ class OrderController extends GetxController implements GetxService {
   List<int> _offsetList = [];
   int _offset = 1;
   OrderModel _orderModel;
+  String _cancelReason = '';
+  List<CancellationData> _orderCancelReasons;
 
   List<OrderModel> get allOrderList => _allOrderList;
   List<OrderModel> get currentOrderList => _currentOrderList;
@@ -50,9 +53,33 @@ class OrderController extends GetxController implements GetxService {
   int get pageSize => _pageSize;
   int get offset => _offset;
   OrderModel get orderModel => _orderModel;
+  String get cancelReason => _cancelReason;
+  List<CancellationData> get orderCancelReasons => _orderCancelReasons;
 
   void initLoading(){
     _isLoading = false;
+    update();
+  }
+
+  void setOrderCancelReason(String reason){
+    _cancelReason = reason;
+    update();
+  }
+
+  Future<void> getOrderCancelReasons()async {
+    Response response = await orderRepo.getCancelReasons();
+    if (response.statusCode == 200) {
+      OrderCancellationBody orderCancellationBody = OrderCancellationBody.fromJson(response.body);
+      _orderCancelReasons = [];
+      if(orderCancellationBody != null){
+        orderCancellationBody.reasons.forEach((element) {
+          _orderCancelReasons.add(element);
+        });
+      }
+
+    }else{
+      ApiChecker.checkApi(response);
+    }
     update();
   }
 
@@ -161,12 +188,12 @@ class OrderController extends GetxController implements GetxService {
     }
   }
 
-  Future<bool> updateOrderStatus(OrderModel currentOrder, String status, {bool back = false}) async {
+  Future<bool> updateOrderStatus(OrderModel currentOrder, String status, {bool back = false,  String reason, bool parcel = false}) async {
     _isLoading = true;
     update();
     UpdateStatusBody _updateStatusBody = UpdateStatusBody(
       orderId: currentOrder.id, status: status,
-      otp: status == AppConstants.DELIVERED ? _otp : null,
+      otp: status == AppConstants.DELIVERED || (parcel && status == AppConstants.PICKED_UP) ? _otp : null, reason: reason,
     );
     Response response = await orderRepo.updateOrderStatus(_updateStatusBody);
     Get.back();
