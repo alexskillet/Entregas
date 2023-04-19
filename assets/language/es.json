@@ -1,4 +1,3 @@
-
 {
   "suffix_name": "Entrega",
   "sign_in": "Iniciar sesión",
@@ -252,4 +251,9 @@
   "no_parcel_category_data_found": "No se han encontrado datos de categorías de paquetes",
   "you_do_not_send_more_then_3_photos": "No puedes enviar más de 3 fotos",
   "receiver_location": "Ubicación del destinatario"
+  "vehicle_type": "tipo de vehiculo",
+  "please_select_vehicle_for_the_deliveryman": "Seleccione el vehículo para el repartidor",
+  "your_app_is_deprecated": "Tu aplicación está obsoleta",
+  "update_now": "Actualizar ahora",
+  "select": "Seleccionar"
 }
