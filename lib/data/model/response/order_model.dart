@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 class PaginatedOrderModel {
-  int totalSize;
-  String limit;
-  String offset;
-  List<OrderModel> orders;
+  int? totalSize;
+  String? limit;
+  String? offset;
+  List<OrderModel>? orders;
 
   PaginatedOrderModel({this.totalSize, this.limit, this.offset, this.orders});
 
@@ -15,18 +15,18 @@ class PaginatedOrderModel {
     if (json['orders'] != null) {
       orders = [];
       json['orders'].forEach((v) {
-        orders.add(new OrderModel.fromJson(v));
+        orders!.add(OrderModel.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['total_size'] = this.totalSize;
-    data['limit'] = this.limit;
-    data['offset'] = this.offset;
-    if (this.orders != null) {
-      data['orders'] = this.orders.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['total_size'] = totalSize;
+    data['limit'] = limit;
+    data['offset'] = offset;
+    if (orders != null) {
+      data['orders'] = orders!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -34,42 +34,42 @@ class PaginatedOrderModel {
 }
 
 class OrderModel {
-  int id;
-  int itemCampaignId;
-  int userId;
-  double orderAmount;
-  double couponDiscountAmount;
-  String paymentStatus;
-  String orderStatus;
-  double totalTaxAmount;
-  String paymentMethod;
-  String transactionReference;
-  int deliveryAddressId;
-  int deliveryManId;
-  String orderType;
-  int storeId;
-  String createdAt;
-  String updatedAt;
-  double deliveryCharge;
-  double originalDeliveryCharge;
-  String scheduleAt;
-  String storeName;
-  String storeAddress;
-  String storeLat;
-  String storeLng;
-  String storeLogo;
-  String storePhone;
-  int detailsCount;
-  String orderNote;
-  bool prescriptionOrder;
-  List<String> orderAttachment;
-  String chargePayer;
-  String moduleType;
-  DeliveryAddress deliveryAddress;
-  DeliveryAddress receiverDetails;
-  ParcelCategory parcelCategory;
-  Customer customer;
-  double dmTips;
+  int? id;
+  int? itemCampaignId;
+  int? userId;
+  double? orderAmount;
+  double? couponDiscountAmount;
+  String? paymentStatus;
+  String? orderStatus;
+  double? totalTaxAmount;
+  String? paymentMethod;
+  String? transactionReference;
+  int? deliveryAddressId;
+  int? deliveryManId;
+  String? orderType;
+  int? storeId;
+  String? createdAt;
+  String? updatedAt;
+  double? deliveryCharge;
+  double? originalDeliveryCharge;
+  String? scheduleAt;
+  String? storeName;
+  String? storeAddress;
+  String? storeLat;
+  String? storeLng;
+  String? storeLogo;
+  String? storePhone;
+  int? detailsCount;
+  String? orderNote;
+  bool? prescriptionOrder;
+  List<String?>? orderAttachment;
+  String? chargePayer;
+  String? moduleType;
+  DeliveryAddress? deliveryAddress;
+  DeliveryAddress? receiverDetails;
+  ParcelCategory? parcelCategory;
+  Customer? customer;
+  double? dmTips;
 
   OrderModel(
       {this.id,
@@ -145,85 +145,85 @@ class OrderModel {
       if(json['order_attachment'].toString().startsWith('["')){
         orderAttachment = [];
         jsonDecode(json['order_attachment']).forEach((v) {
-          orderAttachment.add(v);
+          orderAttachment!.add(v);
         });
       }else{
         orderAttachment = [];
-        orderAttachment.add(json['order_attachment']);
+        orderAttachment!.add(json['order_attachment']);
       }
     }
-    deliveryAddress = json['delivery_address'] != null ? new DeliveryAddress.fromJson(json['delivery_address']) : null;
-    receiverDetails = json['receiver_details'] != null ? new DeliveryAddress.fromJson(json['receiver_details']) : null;
-    parcelCategory = json['parcel_category'] != null ? new ParcelCategory.fromJson(json['parcel_category']) : null;
-    customer = json['customer'] != null ? new Customer.fromJson(json['customer']) : null;
+    deliveryAddress = json['delivery_address'] != null ? DeliveryAddress.fromJson(json['delivery_address']) : null;
+    receiverDetails = json['receiver_details'] != null ? DeliveryAddress.fromJson(json['receiver_details']) : null;
+    parcelCategory = json['parcel_category'] != null ? ParcelCategory.fromJson(json['parcel_category']) : null;
+    customer = json['customer'] != null ? Customer.fromJson(json['customer']) : null;
     dmTips = json['dm_tips'].toDouble();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['item_campaign_id'] = this.itemCampaignId;
-    data['user_id'] = this.userId;
-    data['order_amount'] = this.orderAmount;
-    data['coupon_discount_amount'] = this.couponDiscountAmount;
-    data['payment_status'] = this.paymentStatus;
-    data['order_status'] = this.orderStatus;
-    data['total_tax_amount'] = this.totalTaxAmount;
-    data['payment_method'] = this.paymentMethod;
-    data['transaction_reference'] = this.transactionReference;
-    data['delivery_address_id'] = this.deliveryAddressId;
-    data['delivery_man_id'] = this.deliveryManId;
-    data['order_type'] = this.orderType;
-    data['store_id'] = this.storeId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['delivery_charge'] = this.deliveryCharge;
-    data['original_delivery_charge'] = this.originalDeliveryCharge;
-    data['schedule_at'] = this.scheduleAt;
-    data['store_name'] = this.storeName;
-    data['store_address'] = this.storeAddress;
-    data['store_lat'] = this.storeLat;
-    data['store_lng'] = this.storeLng;
-    data['store_logo'] = this.storeLogo;
-    data['store_phone'] = this.storePhone;
-    data['details_count'] = this.detailsCount;
-    data['prescription_order'] = this.prescriptionOrder;
-    data['order_attachment'] = this.orderAttachment;
-    data['order_attachment'] = this.chargePayer;
-    data['order_note'] = this.orderNote;
-    data['module_type'] = this.moduleType;
-    if (this.deliveryAddress != null) {
-      data['delivery_address'] = this.deliveryAddress.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['item_campaign_id'] = itemCampaignId;
+    data['user_id'] = userId;
+    data['order_amount'] = orderAmount;
+    data['coupon_discount_amount'] = couponDiscountAmount;
+    data['payment_status'] = paymentStatus;
+    data['order_status'] = orderStatus;
+    data['total_tax_amount'] = totalTaxAmount;
+    data['payment_method'] = paymentMethod;
+    data['transaction_reference'] = transactionReference;
+    data['delivery_address_id'] = deliveryAddressId;
+    data['delivery_man_id'] = deliveryManId;
+    data['order_type'] = orderType;
+    data['store_id'] = storeId;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['delivery_charge'] = deliveryCharge;
+    data['original_delivery_charge'] = originalDeliveryCharge;
+    data['schedule_at'] = scheduleAt;
+    data['store_name'] = storeName;
+    data['store_address'] = storeAddress;
+    data['store_lat'] = storeLat;
+    data['store_lng'] = storeLng;
+    data['store_logo'] = storeLogo;
+    data['store_phone'] = storePhone;
+    data['details_count'] = detailsCount;
+    data['prescription_order'] = prescriptionOrder;
+    data['order_attachment'] = orderAttachment;
+    data['order_attachment'] = chargePayer;
+    data['order_note'] = orderNote;
+    data['module_type'] = moduleType;
+    if (deliveryAddress != null) {
+      data['delivery_address'] = deliveryAddress!.toJson();
     }
-    if (this.receiverDetails != null) {
-      data['receiver_details'] = this.receiverDetails.toJson();
+    if (receiverDetails != null) {
+      data['receiver_details'] = receiverDetails!.toJson();
     }
-    if (this.parcelCategory != null) {
-      data['parcel_category'] = this.parcelCategory.toJson();
+    if (parcelCategory != null) {
+      data['parcel_category'] = parcelCategory!.toJson();
     }
-    if (this.customer != null) {
-      data['customer'] = this.customer.toJson();
+    if (customer != null) {
+      data['customer'] = customer!.toJson();
     }
-    data['dm_tips'] = this.dmTips;
+    data['dm_tips'] = dmTips;
     return data;
   }
 }
 
 class DeliveryAddress {
-  int id;
-  String addressType;
-  String contactPersonNumber;
-  String address;
-  String latitude;
-  String longitude;
-  int userId;
-  String contactPersonName;
-  String createdAt;
-  String updatedAt;
-  int zoneId;
-  String streetNumber;
-  String house;
-  String floor;
+  int? id;
+  String? addressType;
+  String? contactPersonNumber;
+  String? address;
+  String? latitude;
+  String? longitude;
+  int? userId;
+  String? contactPersonName;
+  String? createdAt;
+  String? updatedAt;
+  int? zoneId;
+  String? streetNumber;
+  String? house;
+  String? floor;
 
 
   DeliveryAddress(
@@ -245,7 +245,7 @@ class DeliveryAddress {
   DeliveryAddress.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     addressType = json['address_type'];
-    contactPersonNumber = json['contact_person_number'];
+    contactPersonNumber = json['contact_person_number'].toString();
     address = json['address'];
     latitude = json['latitude'].toString();
     longitude = json['longitude'].toString();
@@ -261,35 +261,35 @@ class DeliveryAddress {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['address_type'] = this.addressType;
-    data['contact_person_number'] = this.contactPersonNumber;
-    data['address'] = this.address;
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
-    data['user_id'] = this.userId;
-    data['contact_person_name'] = this.contactPersonName;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['zone_id'] = this.zoneId;
-    data['road'] = this.streetNumber;
-    data['house'] = this.house;
-    data['floor'] = this.floor;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['address_type'] = addressType;
+    data['contact_person_number'] = contactPersonNumber;
+    data['address'] = address;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
+    data['user_id'] = userId;
+    data['contact_person_name'] = contactPersonName;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['zone_id'] = zoneId;
+    data['road'] = streetNumber;
+    data['house'] = house;
+    data['floor'] = floor;
     return data;
   }
 }
 
 class Customer {
-  int id;
-  String fName;
-  String lName;
-  String phone;
-  String email;
-  String image;
-  String createdAt;
-  String updatedAt;
-  String cmFirebaseToken;
+  int? id;
+  String? fName;
+  String? lName;
+  String? phone;
+  String? email;
+  String? image;
+  String? createdAt;
+  String? updatedAt;
+  String? cmFirebaseToken;
 
   Customer(
       {this.id,
@@ -315,27 +315,27 @@ class Customer {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['f_name'] = this.fName;
-    data['l_name'] = this.lName;
-    data['phone'] = this.phone;
-    data['email'] = this.email;
-    data['image'] = this.image;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['cm_firebase_token'] = this.cmFirebaseToken;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['f_name'] = fName;
+    data['l_name'] = lName;
+    data['phone'] = phone;
+    data['email'] = email;
+    data['image'] = image;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['cm_firebase_token'] = cmFirebaseToken;
     return data;
   }
 }
 
 class ParcelCategory {
-  int id;
-  String image;
-  String name;
-  String description;
-  String createdAt;
-  String updatedAt;
+  int? id;
+  String? image;
+  String? name;
+  String? description;
+  String? createdAt;
+  String? updatedAt;
 
   ParcelCategory(
       {this.id,
@@ -355,13 +355,13 @@ class ParcelCategory {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['image'] = this.image;
-    data['name'] = this.name;
-    data['description'] = this.description;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['image'] = image;
+    data['name'] = name;
+    data['description'] = description;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

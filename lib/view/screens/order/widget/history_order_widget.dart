@@ -13,11 +13,11 @@ class HistoryOrderWidget extends StatelessWidget {
   final OrderModel orderModel;
   final bool isRunning;
   final int index;
-  HistoryOrderWidget({@required this.orderModel, @required this.isRunning, @required this.index});
+  const HistoryOrderWidget({Key? key, required this.orderModel, required this.isRunning, required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool _parcel = orderModel.orderType == 'parcel';
+    bool parcel = orderModel.orderType == 'parcel';
 
     return InkWell(
       onTap: () => Get.toNamed(
@@ -25,71 +25,71 @@ class HistoryOrderWidget extends StatelessWidget {
         arguments: OrderDetailsScreen(orderId: orderModel.id, isRunningOrder: isRunning, orderIndex: index),
       ),
       child: Container(
-        padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
-        margin: EdgeInsets.only(bottom: Dimensions.PADDING_SIZE_SMALL),
+        padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+        margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 700 : 300], spreadRadius: 1, blurRadius: 5)],
-          borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+          boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 700 : 300]!, spreadRadius: 1, blurRadius: 5)],
+          borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
         ),
         child: Row(children: [
 
           Container(
             height: 70, width: 70, alignment: Alignment.center,
-            decoration: _parcel ? BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+            decoration: parcel ? BoxDecoration(
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
               color: Theme.of(context).primaryColor.withOpacity(0.2),
             ) : null,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
               child: CustomImage(
-                image: _parcel ? '${Get.find<SplashController>().configModel.baseUrls.parcelCategoryImageUrl}/${orderModel.parcelCategory != null
-                    ? orderModel.parcelCategory.image : ''}'
-                    : '${Get.find<SplashController>().configModel.baseUrls.storeImageUrl}/${orderModel.storeLogo ?? ''}',
-                height: _parcel ? 45 : 70, width: _parcel ? 45 : 70, fit: BoxFit.cover,
+                image: parcel ? '${Get.find<SplashController>().configModel!.baseUrls!.parcelCategoryImageUrl}/${orderModel.parcelCategory != null
+                    ? orderModel.parcelCategory!.image : ''}'
+                    : '${Get.find<SplashController>().configModel!.baseUrls!.storeImageUrl}/${orderModel.storeLogo ?? ''}',
+                height: parcel ? 45 : 70, width: parcel ? 45 : 70, fit: BoxFit.cover,
               ),
             ),
           ),
-          SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+          const SizedBox(width: Dimensions.paddingSizeSmall),
 
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
               Row(children: [
                 Text(
-                  '${_parcel ? 'delivery_id'.tr : 'order_id'.tr}:',
-                  style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL),
+                  '${parcel ? 'delivery_id'.tr : 'order_id'.tr}:',
+                  style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
                 ),
-                SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+                const SizedBox(width: Dimensions.paddingSizeExtraSmall),
                 Expanded(child: Text(
                   '#${orderModel.id}',
-                  style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL),
+                  style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall),
                 )),
-                _parcel ? Container(
-                  padding: EdgeInsets.all(Dimensions.PADDING_SIZE_EXTRA_SMALL),
+                parcel ? Container(
+                  padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+                    borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
                     color: Theme.of(context).primaryColor.withOpacity(0.1),
                   ),
                   child: Text('parcel'.tr, style: robotoMedium.copyWith(
-                    fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL, color: Theme.of(context).primaryColor,
+                    fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).primaryColor,
                   )),
-                ) : SizedBox(),
+                ) : const SizedBox(),
               ]),
-              SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
 
               Text(
-                _parcel ? orderModel.parcelCategory != null ? orderModel.parcelCategory.name : 'no_parcel_category_data_found'.tr : orderModel.storeName ?? 'no_store_data_found'.tr,
-                style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL, color: Theme.of(context).primaryColor),
+                parcel ? orderModel.parcelCategory != null ? orderModel.parcelCategory!.name! : 'no_parcel_category_data_found'.tr : orderModel.storeName ?? 'no_store_data_found'.tr,
+                style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
               ),
-              SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
 
               Row(children: [
-                Icon(Icons.access_time, size: 15),
-                SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+                const Icon(Icons.access_time, size: 15),
+                const SizedBox(width: Dimensions.paddingSizeExtraSmall),
                 Text(
-                  DateConverter.dateTimeStringToDateTime(orderModel.createdAt),
-                  style: robotoRegular.copyWith(color: Theme.of(context).disabledColor, fontSize: Dimensions.FONT_SIZE_SMALL),
+                  DateConverter.dateTimeStringToDateTime(orderModel.createdAt!),
+                  style: robotoRegular.copyWith(color: Theme.of(context).disabledColor, fontSize: Dimensions.fontSizeSmall),
                 ),
               ]),
 

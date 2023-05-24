@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageController extends GetxController implements GetxService {
-  final SharedPreferences sharedPreferences;
+  final SharedPreferences? sharedPreferences;
   LanguageController({this.sharedPreferences});
 
   int _selectIndex = 0;
@@ -27,17 +27,17 @@ class LanguageController extends GetxController implements GetxService {
     } else {
       _selectIndex = -1;
       _languages = [];
-      AppConstants.languages.forEach((language) async {
-        if (language.languageName.toLowerCase().contains(query.toLowerCase())) {
+      for (var language in AppConstants.languages) {
+        if (language.languageName!.toLowerCase().contains(query.toLowerCase())) {
           _languages.add(language);
         }
-      });
+      }
       update();
     }
   }
 
   void initializeAllLanguages(BuildContext context) {
-    if (_languages.length == 0) {
+    if (_languages.isEmpty) {
       _languages.clear();
       _languages = AppConstants.languages;
     }

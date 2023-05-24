@@ -21,18 +21,18 @@ class OrderRequestWidget extends StatelessWidget {
   final int index;
   final bool fromDetailsPage;
   final Function onTap;
-  OrderRequestWidget({@required this.orderModel, @required this.index, @required this.onTap, this.fromDetailsPage = false});
+  const OrderRequestWidget({Key? key, required this.orderModel, required this.index, required this.onTap, this.fromDetailsPage = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool _parcel = orderModel.orderType == 'parcel';
+    bool parcel = orderModel.orderType == 'parcel';
 
     return Container(
-      margin: EdgeInsets.only(bottom: Dimensions.PADDING_SIZE_SMALL),
-      padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+      margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
+      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
       ),
       child: GetBuilder<OrderController>(builder: (orderController) {
         return Column(children: [
@@ -40,73 +40,73 @@ class OrderRequestWidget extends StatelessWidget {
           Row(children: [
             Container(
               height: 45, width: 45, alignment: Alignment.center,
-              decoration: _parcel ? BoxDecoration(
-                borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+              decoration: parcel ? BoxDecoration(
+                borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
                 color: Theme.of(context).primaryColor.withOpacity(0.2),
               ) : null,
-              child: ClipRRect(borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL), child: CustomImage(
-                image: _parcel ? '${Get.find<SplashController>().configModel.baseUrls.parcelCategoryImageUrl}/${orderModel.parcelCategory != null
-                    ? orderModel.parcelCategory.image : ''}' : '${Get.find<SplashController>().configModel.baseUrls.storeImageUrl}/${orderModel.storeLogo ?? ''}',
-                height: _parcel ? 30 : 45, width: _parcel ? 30 : 45, fit: BoxFit.cover,
+              child: ClipRRect(borderRadius: BorderRadius.circular(Dimensions.radiusSmall), child: CustomImage(
+                image: parcel ? '${Get.find<SplashController>().configModel!.baseUrls!.parcelCategoryImageUrl}/${orderModel.parcelCategory != null
+                    ? orderModel.parcelCategory!.image : ''}' : '${Get.find<SplashController>().configModel!.baseUrls!.storeImageUrl}/${orderModel.storeLogo ?? ''}',
+                height: parcel ? 30 : 45, width: parcel ? 30 : 45, fit: BoxFit.cover,
               )),
             ),
-            SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+            const SizedBox(width: Dimensions.paddingSizeSmall),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
-                _parcel ? orderModel.parcelCategory != null ? orderModel.parcelCategory.name ?? ''
+                parcel ? orderModel.parcelCategory != null ? orderModel.parcelCategory!.name ?? ''
                     : '' : orderModel.storeName ?? 'no_store_data_found'.tr, maxLines: 2, overflow: TextOverflow.ellipsis,
-                style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL),
+                style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
               ),
               Text(
-                _parcel ? orderModel.parcelCategory != null ? orderModel.parcelCategory.description ?? '' : '' : orderModel.storeAddress ?? '', maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL, color: Theme.of(context).disabledColor),
+                parcel ? orderModel.parcelCategory != null ? orderModel.parcelCategory!.description ?? '' : '' : orderModel.storeAddress ?? '', maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor),
               ),
             ])),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_SMALL, vertical: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+              padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeExtraSmall),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Theme.of(context).primaryColor, width: 1),
               ),
               child: Column(children: [
-                (Get.find<SplashController>().configModel.showDmEarning && Get.find<AuthController>().profileModel != null
-                    && Get.find<AuthController>().profileModel.earnings == 1) ? Text(
-                  PriceConverter.convertPrice(orderModel.originalDeliveryCharge + orderModel.dmTips),
-                  style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL, color: Theme.of(context).primaryColor),
-                ) : SizedBox(),
+                (Get.find<SplashController>().configModel!.showDmEarning! && Get.find<AuthController>().profileModel != null
+                    && Get.find<AuthController>().profileModel!.earnings == 1) ? Text(
+                  PriceConverter.convertPrice(orderModel.originalDeliveryCharge! + orderModel.dmTips!),
+                  style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).primaryColor),
+                ) : const SizedBox(),
 
                 Text(
                   orderModel.paymentMethod == 'cash_on_delivery' ? 'cod'.tr : orderModel.paymentMethod == 'wallet' ? 'wallet'.tr : 'digitally_paid'.tr,
-                  style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL, color: Theme.of(context).primaryColor),
+                  style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).primaryColor),
                 ),
               ]),
             ),
           ]),
-          SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+          const SizedBox(height: Dimensions.paddingSizeSmall),
 
           Container(
-            padding: _parcel ? EdgeInsets.all(Dimensions.PADDING_SIZE_EXTRA_SMALL) : null,
-            decoration: _parcel ? BoxDecoration(
+            padding: parcel ? const EdgeInsets.all(Dimensions.paddingSizeExtraSmall) : null,
+            decoration: parcel ? BoxDecoration(
               color: Theme.of(context).primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
             ) : null,
             child: Text(
-              _parcel ? 'parcel'.tr : '${orderModel.detailsCount} ${orderModel.detailsCount > 1 ? 'items'.tr : 'item'.tr}',
-              style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL, color: _parcel ? Theme.of(context).primaryColor : null),
+              parcel ? 'parcel'.tr : '${orderModel.detailsCount} ${orderModel.detailsCount! > 1 ? 'items'.tr : 'item'.tr}',
+              style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: parcel ? Theme.of(context).primaryColor : null),
             ),
           ),
-          SizedBox(height: _parcel ? Dimensions.PADDING_SIZE_EXTRA_SMALL : 0),
+          SizedBox(height: parcel ? Dimensions.paddingSizeExtraSmall : 0),
           Text(
-            '${DateConverter.timeDistanceInMin(orderModel.createdAt)} ${'mins_ago'.tr}',
+            '${DateConverter.timeDistanceInMin(orderModel.createdAt!)} ${'mins_ago'.tr}',
             style: robotoBold.copyWith(color: Theme.of(context).primaryColor),
           ),
-          SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+          const SizedBox(height: Dimensions.paddingSizeSmall),
 
           Row(children: [
             Expanded(child: TextButton(
               onPressed: () => Get.dialog(ConfirmationDialog(
                 icon: Images.warning, title: 'are_you_sure_to_ignore'.tr,
-                description: _parcel ? 'you_want_to_ignore_this_delivery'.tr : 'you_want_to_ignore_this_order'.tr,
+                description: parcel ? 'you_want_to_ignore_this_delivery'.tr : 'you_want_to_ignore_this_order'.tr,
                 onYesPressed: () {
                   orderController.ignoreOrder(index);
                   Get.back();
@@ -114,24 +114,24 @@ class OrderRequestWidget extends StatelessWidget {
                 },
               ), barrierDismissible: false),
               style: TextButton.styleFrom(
-                minimumSize: Size(1170, 40), padding: EdgeInsets.zero,
+                minimumSize: const Size(1170, 40), padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
-                  side: BorderSide(width: 1, color: Theme.of(context).textTheme.bodyLarge.color),
+                  borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                  side: BorderSide(width: 1, color: Theme.of(context).textTheme.bodyLarge!.color!),
                 ),
               ),
               child: Text('ignore'.tr, textAlign: TextAlign.center, style: robotoRegular.copyWith(
-                color: Theme.of(context).textTheme.bodyLarge.color,
-                fontSize: Dimensions.FONT_SIZE_LARGE,
+                color: Theme.of(context).textTheme.bodyLarge!.color,
+                fontSize: Dimensions.fontSizeLarge,
               )),
             )),
-            SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+            const SizedBox(width: Dimensions.paddingSizeSmall),
             Expanded(child: CustomButton(
               height: 40,
               buttonText: 'accept'.tr,
               onPressed: () => Get.dialog(ConfirmationDialog(
                 icon: Images.warning, title: 'are_you_sure_to_accept'.tr,
-                description: _parcel ? 'you_want_to_accept_this_delivery'.tr : 'you_want_to_accept_this_order'.tr,
+                description: parcel ? 'you_want_to_accept_this_delivery'.tr : 'you_want_to_accept_this_order'.tr,
                 onYesPressed: () {
                   orderController.acceptOrder(orderModel.id, index, orderModel).then((isSuccess) {
                     if(isSuccess) {
@@ -141,7 +141,7 @@ class OrderRequestWidget extends StatelessWidget {
                       Get.toNamed(
                         RouteHelper.getOrderDetailsRoute(orderModel.id),
                         arguments: OrderDetailsScreen(
-                          orderId: orderModel.id, isRunningOrder: true, orderIndex: orderController.currentOrderList.length-1,
+                          orderId: orderModel.id, isRunningOrder: true, orderIndex: orderController.currentOrderList!.length-1,
                         ),
                       );
                     }else {

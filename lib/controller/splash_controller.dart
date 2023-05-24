@@ -1,43 +1,42 @@
 import 'package:sixam_mart_delivery/data/api/api_checker.dart';
 import 'package:sixam_mart_delivery/data/model/response/config_model.dart';
 import 'package:sixam_mart_delivery/data/repository/splash_repo.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SplashController extends GetxController implements GetxService {
   final SplashRepo splashRepo;
-  SplashController({@required this.splashRepo});
+  SplashController({required this.splashRepo});
 
-  ConfigModel _configModel;
+  ConfigModel? _configModel;
   bool _firstTimeConnectionCheck = true;
-  int _storeCategoryID;
-  String _storeType;
-  Map<String, dynamic> _data = Map();
-  String _htmlText;
+  int? _storeCategoryID;
+  String? _storeType;
+  Map<String, dynamic>? _data = {};
+  String? _htmlText;
 
-  ConfigModel get configModel => _configModel;
+  ConfigModel? get configModel => _configModel;
   DateTime get currentTime => DateTime.now();
   bool get firstTimeConnectionCheck => _firstTimeConnectionCheck;
-  int get storeCategoryID => _storeCategoryID;
-  String get storeType => _storeType;
-  String get htmlText => _htmlText;
+  int? get storeCategoryID => _storeCategoryID;
+  String? get storeType => _storeType;
+  String? get htmlText => _htmlText;
 
   Future<bool> getConfigData() async {
     Response response = await splashRepo.getConfigData();
-    bool _isSuccess = false;
+    bool isSuccess = false;
     if(response.statusCode == 200) {
       _data = response.body;
       _configModel = ConfigModel.fromJson(response.body);
-      _isSuccess = true;
+      isSuccess = true;
     }else {
       ApiChecker.checkApi(response);
-      _isSuccess = false;
+      isSuccess = false;
     }
     update();
-    return _isSuccess;
+    return isSuccess;
   }
 
-  Module getModule(String moduleType) => Module.fromJson(_data['module_config'][moduleType]);
+  Module getModule(String? moduleType) => Module.fromJson(_data!['module_config'][moduleType]);
 
   Future<bool> initSharedData() {
     return splashRepo.initSharedData();
@@ -56,8 +55,8 @@ class SplashController extends GetxController implements GetxService {
     Response response = await splashRepo.getHtmlText(isPrivacyPolicy);
     if (response.statusCode == 200) {
       _htmlText = response.body;
-      if(_htmlText != null && _htmlText.isNotEmpty) {
-        _htmlText = _htmlText.replaceAll('href=', 'target="_blank" href=');
+      if(_htmlText != null && _htmlText!.isNotEmpty) {
+        _htmlText = _htmlText!.replaceAll('href=', 'target="_blank" href=');
       }else {
         _htmlText = '';
       }

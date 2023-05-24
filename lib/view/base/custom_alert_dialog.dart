@@ -7,23 +7,23 @@ import 'package:get/get.dart';
 class CustomAlertDialog extends StatelessWidget {
   final String description;
   final Function onOkPressed;
-  CustomAlertDialog({@required this.description, @required this.onOkPressed});
+  const CustomAlertDialog({Key? key, required this.description, required this.onOkPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.radiusSmall)),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_LARGE, vertical: Dimensions.PADDING_SIZE_SMALL),
+        padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeSmall),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
 
           Icon(Icons.info, size: 80, color: Theme.of(context).primaryColor),
 
           Padding(
-            padding: EdgeInsets.all(Dimensions.PADDING_SIZE_LARGE),
+            padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
             child: Text(
               description, textAlign: TextAlign.center,
-              style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE),
+              style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge),
             ),
           ),
 

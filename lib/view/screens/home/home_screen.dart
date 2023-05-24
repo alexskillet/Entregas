@@ -23,6 +23,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
 
   Future<void> _loadData() async {
     Get.find<OrderController>().getIgnoreList();
@@ -30,8 +32,8 @@ class HomeScreen extends StatelessWidget {
     await Get.find<AuthController>().getProfile();
     await Get.find<OrderController>().getCurrentOrders();
     await Get.find<NotificationController>().getNotificationList();
-    bool _isBatteryOptimizationDisabled = GetPlatform.isAndroid ? await DisableBatteryOptimization.isBatteryOptimizationDisabled : true;
-    if(!_isBatteryOptimizationDisabled && GetPlatform.isAndroid) {
+    bool isBatteryOptimizationDisabled = GetPlatform.isAndroid ? (await DisableBatteryOptimization.isBatteryOptimizationDisabled)! : true;
+    if(!isBatteryOptimizationDisabled && GetPlatform.isAndroid) {
       DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
     }
   }
@@ -44,25 +46,25 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).cardColor,
         leading: Padding(
-          padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
           child: Image.asset(Images.logo, height: 30, width: 30),
         ),
         titleSpacing: 0, elevation: 0,
-        title: Text(AppConstants.APP_NAME, maxLines: 1, overflow: TextOverflow.ellipsis, style: robotoMedium.copyWith(
-          color: Theme.of(context).textTheme.bodyLarge.color, fontSize: Dimensions.FONT_SIZE_DEFAULT,
+        title: Text(AppConstants.appName, maxLines: 1, overflow: TextOverflow.ellipsis, style: robotoMedium.copyWith(
+          color: Theme.of(context).textTheme.bodyLarge!.color, fontSize: Dimensions.fontSizeDefault,
         )),
         actions: [
           IconButton(
             icon: GetBuilder<NotificationController>(builder: (notificationController) {
 
               return Stack(children: [
-                Icon(Icons.notifications, size: 25, color: Theme.of(context).textTheme.bodyLarge.color),
+                Icon(Icons.notifications, size: 25, color: Theme.of(context).textTheme.bodyLarge!.color),
                 notificationController.hasNotification ? Positioned(top: 0, right: 0, child: Container(
                   height: 10, width: 10, decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor, shape: BoxShape.circle,
                   border: Border.all(width: 1, color: Theme.of(context).cardColor),
                 ),
-                )) : SizedBox(),
+                )) : const SizedBox(),
               ]);
             }),
             onPressed: () => Get.toNamed(RouteHelper.getNotificationRoute()),
@@ -70,10 +72,10 @@ class HomeScreen extends StatelessWidget {
           GetBuilder<AuthController>(builder: (authController) {
             return GetBuilder<OrderController>(builder: (orderController) {
               return (authController.profileModel != null && orderController.currentOrderList != null) ? FlutterSwitch(
-                width: 75, height: 30, valueFontSize: Dimensions.FONT_SIZE_EXTRA_SMALL, showOnOff: true,
+                width: 75, height: 30, valueFontSize: Dimensions.fontSizeExtraSmall, showOnOff: true,
                 activeText: 'online'.tr, inactiveText: 'offline'.tr, activeColor: Theme.of(context).primaryColor,
-                value: authController.profileModel.active == 1, onToggle: (bool isActive) async {
-                  if(!isActive && orderController.currentOrderList.length > 0) {
+                value: authController.profileModel!.active == 1, onToggle: (bool isActive) async {
+                  if(!isActive && orderController.currentOrderList!.isNotEmpty) {
                     showCustomSnackBar('you_can_not_go_offline_now'.tr);
                   }else {
                     if(!isActive) {
@@ -90,7 +92,7 @@ class HomeScreen extends StatelessWidget {
                           || (GetPlatform.isIOS ? false : permission == LocationPermission.whileInUse)) {
                         if(GetPlatform.isAndroid) {
                           Get.dialog(ConfirmationDialog(
-                            icon: Images.location_permission,
+                            icon: Images.locationPermission,
                             iconSize: 200,
                             hasCancel: false,
                             description: 'this_app_collects_location_data'.tr,
@@ -108,10 +110,10 @@ class HomeScreen extends StatelessWidget {
                     }
                   }
                 },
-              ) : SizedBox();
+              ) : const SizedBox();
             });
           }),
-          SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+          const SizedBox(width: Dimensions.paddingSizeSmall),
         ],
       ),
 
@@ -120,103 +122,103 @@ class HomeScreen extends StatelessWidget {
           return await _loadData();
         },
         child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
           child: GetBuilder<AuthController>(builder: (authController) {
 
             return Column(children: [
 
               GetBuilder<OrderController>(builder: (orderController) {
-                bool _hasActiveOrder = orderController.currentOrderList == null || orderController.currentOrderList.length > 0;
-                bool _hasMoreOrder = orderController.currentOrderList != null && orderController.currentOrderList.length > 1;
+                bool hasActiveOrder = orderController.currentOrderList == null || orderController.currentOrderList!.isNotEmpty;
+                bool hasMoreOrder = orderController.currentOrderList != null && orderController.currentOrderList!.length > 1;
                 return Column(children: [
-                  _hasActiveOrder ? TitleWidget(
-                    title: 'active_order'.tr, onTap: _hasMoreOrder ? () {
-                      Get.toNamed(RouteHelper.getRunningOrderRoute(), arguments: RunningOrderScreen());
+                  hasActiveOrder ? TitleWidget(
+                    title: 'active_order'.tr, onTap: hasMoreOrder ? () {
+                      Get.toNamed(RouteHelper.getRunningOrderRoute(), arguments: const RunningOrderScreen());
                     } : null,
-                  ) : SizedBox(),
-                  SizedBox(height: _hasActiveOrder ? Dimensions.PADDING_SIZE_EXTRA_SMALL : 0),
+                  ) : const SizedBox(),
+                  SizedBox(height: hasActiveOrder ? Dimensions.paddingSizeExtraSmall : 0),
                   orderController.currentOrderList == null ? OrderShimmer(
                     isEnabled: orderController.currentOrderList == null,
-                  ) : orderController.currentOrderList.length > 0 ? OrderWidget(
-                    orderModel: orderController.currentOrderList[0], isRunningOrder: true, orderIndex: 0,
-                  ) : SizedBox(),
-                  SizedBox(height: _hasActiveOrder ? Dimensions.PADDING_SIZE_DEFAULT : 0),
+                  ) : orderController.currentOrderList!.isNotEmpty ? OrderWidget(
+                    orderModel: orderController.currentOrderList![0], isRunningOrder: true, orderIndex: 0,
+                  ) : const SizedBox(),
+                  SizedBox(height: hasActiveOrder ? Dimensions.paddingSizeDefault : 0),
                 ]);
               }),
 
-              (authController.profileModel != null && authController.profileModel.earnings == 1) ? Column(children: [
+              (authController.profileModel != null && authController.profileModel!.earnings == 1) ? Column(children: [
                 TitleWidget(title: 'earnings'.tr),
-                SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+                const SizedBox(height: Dimensions.paddingSizeExtraSmall),
                 Container(
-                  padding: EdgeInsets.all(Dimensions.PADDING_SIZE_LARGE),
+                  padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+                    borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
                     color: Theme.of(context).primaryColor,
                   ),
                   child: Column(children: [
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                      SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+                      const SizedBox(width: Dimensions.paddingSizeSmall),
                       Image.asset(Images.wallet, width: 60, height: 60),
-                      SizedBox(width: Dimensions.PADDING_SIZE_LARGE),
+                      const SizedBox(width: Dimensions.paddingSizeLarge),
                       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(
                           'balance'.tr,
-                          style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL, color: Theme.of(context).cardColor),
+                          style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).cardColor),
                         ),
-                        SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+                        const SizedBox(height: Dimensions.paddingSizeSmall),
                         authController.profileModel != null ? Text(
-                          PriceConverter.convertPrice(authController.profileModel.balance),
+                          PriceConverter.convertPrice(authController.profileModel!.balance),
                           style: robotoBold.copyWith(fontSize: 24, color: Theme.of(context).cardColor),
                           maxLines: 1, overflow: TextOverflow.ellipsis,
                         ) : Container(height: 30, width: 60, color: Colors.white),
                       ]),
                     ]),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Row(children: [
                       EarningWidget(
                         title: 'today'.tr,
-                        amount: authController.profileModel != null ? authController.profileModel.todaysEarning : null,
+                        amount: authController.profileModel != null ? authController.profileModel!.todaysEarning : null,
                       ),
                       Container(height: 30, width: 1, color: Theme.of(context).cardColor),
                       EarningWidget(
                         title: 'this_week'.tr,
-                        amount: authController.profileModel != null ? authController.profileModel.thisWeekEarning : null,
+                        amount: authController.profileModel != null ? authController.profileModel!.thisWeekEarning : null,
                       ),
                       Container(height: 30, width: 1, color: Theme.of(context).cardColor),
                       EarningWidget(
                         title: 'this_month'.tr,
-                        amount: authController.profileModel != null ? authController.profileModel.thisMonthEarning : null,
+                        amount: authController.profileModel != null ? authController.profileModel!.thisMonthEarning : null,
                       ),
                     ]),
                   ]),
                 ),
-                SizedBox(height: Dimensions.PADDING_SIZE_DEFAULT),
-              ]) : SizedBox(),
+                const SizedBox(height: Dimensions.paddingSizeDefault),
+              ]) : const SizedBox(),
 
               TitleWidget(title: 'orders'.tr),
-              SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
               Row(children: [
                 Expanded(child: CountCard(
                   title: 'todays_orders'.tr, backgroundColor: Theme.of(context).secondaryHeaderColor, height: 180,
-                  value: authController.profileModel != null ? authController.profileModel.todaysOrderCount.toString() : null,
+                  value: authController.profileModel != null ? authController.profileModel!.todaysOrderCount.toString() : null,
                 )),
-                SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+                const SizedBox(width: Dimensions.paddingSizeSmall),
                 Expanded(child: CountCard(
                   title: 'this_week_orders'.tr, backgroundColor: Theme.of(context).colorScheme.error, height: 180,
-                  value: authController.profileModel != null ? authController.profileModel.thisWeekOrderCount.toString() : null,
+                  value: authController.profileModel != null ? authController.profileModel!.thisWeekOrderCount.toString() : null,
                 )),
               ]),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
               CountCard(
                 title: 'total_orders'.tr, backgroundColor: Theme.of(context).primaryColor, height: 140,
-                value: authController.profileModel != null ? authController.profileModel.orderCount.toString() : null,
+                value: authController.profileModel != null ? authController.profileModel!.orderCount.toString() : null,
               ),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
               CountCard(
                 title: 'cash_in_your_hand'.tr, backgroundColor: Colors.green, height: 140,
                 value: authController.profileModel != null
-                    ? PriceConverter.convertPrice(authController.profileModel.cashInHands) : null,
+                    ? PriceConverter.convertPrice(authController.profileModel!.cashInHands) : null,
               ),
 
               /*TitleWidget(title: 'ratings'.tr),

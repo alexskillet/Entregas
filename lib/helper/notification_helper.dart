@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sixam_mart_delivery/controller/auth_controller.dart';
 import 'package:sixam_mart_delivery/controller/chat_controller.dart';
@@ -18,42 +19,44 @@ import 'package:http/http.dart' as http;
 class NotificationHelper {
 
   static Future<void> initialize(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
-    var androidInitialize = new AndroidInitializationSettings('notification_icon');
-    var iOSInitialize = new DarwinInitializationSettings();
-    var initializationsSettings = new InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
+    var androidInitialize = const AndroidInitializationSettings('notification_icon');
+    var iOSInitialize = const DarwinInitializationSettings();
+    var initializationsSettings = InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
     flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>().requestPermission();
-    flutterLocalNotificationsPlugin.initialize(initializationsSettings, onDidReceiveNotificationResponse: (payload) async{
+        AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
+    flutterLocalNotificationsPlugin.initialize(initializationsSettings, onDidReceiveNotificationResponse: (load) async{
       try{
-        if(payload != null && payload.payload.isNotEmpty){
+        if(load.payload!.isNotEmpty){
 
-          NotificationBody _payload = NotificationBody.fromJson(jsonDecode(payload.payload));
+          NotificationBody payload = NotificationBody.fromJson(jsonDecode(load.payload!));
 
-          if(_payload.notificationType == NotificationType.order){
-            Get.offAllNamed(RouteHelper.getOrderDetailsRoute(_payload.orderId, fromNotification: true));
-          }else if(_payload.notificationType == NotificationType.order_request){
+          if(payload.notificationType == NotificationType.order){
+            Get.offAllNamed(RouteHelper.getOrderDetailsRoute(payload.orderId, fromNotification: true));
+          }else if(payload.notificationType == NotificationType.order_request){
             Get.toNamed(RouteHelper.getMainRoute('order-request'));
 
-          }else if(_payload.notificationType == NotificationType.general){
+          }else if(payload.notificationType == NotificationType.general){
             Get.offAllNamed(RouteHelper.getNotificationRoute(fromNotification: true));
           }else{
-            Get.offAllNamed(RouteHelper.getChatRoute(notificationBody: _payload, conversationId: _payload.conversationId, fromNotification: true));
+            Get.offAllNamed(RouteHelper.getChatRoute(notificationBody: payload, conversationId: payload.conversationId, fromNotification: true));
           }
 
         }
-      }catch(e){}
+      }catch(_){}
       return;
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("onMessage: ${message.notification.title}/${message.notification.body}/${message.notification.titleLocKey}");
-      print("onMessage message type:${message.data['type']}");
-      print("onMessage message:${message.data}");
+      if (kDebugMode) {
+        print("onMessage: ${message.notification!.title}/${message.notification!.body}/${message.notification!.titleLocKey}");
+        print("onMessage message type:${message.data['type']}");
+        print("onMessage message:${message.data}");
+      }
 
       if(message.data['type'] == 'message' && Get.currentRoute.startsWith(RouteHelper.chatScreen)){
         if(Get.find<AuthController>().isLoggedIn()) {
           Get.find<ChatController>().getConversationList(1);
-          if(Get.find<ChatController>().messageModel.conversation.id.toString() == message.data['conversation_id'].toString()) {
+          if(Get.find<ChatController>().messageModel!.conversation!.id.toString() == message.data['conversation_id'].toString()) {
             Get.find<ChatController>().getMessages(
               1, NotificationBody(
               notificationType: NotificationType.message,
@@ -72,9 +75,9 @@ class NotificationHelper {
         }
         NotificationHelper.showNotification(message, flutterLocalNotificationsPlugin);
       }else {
-        String _type = message.data['type'];
+        String? type = message.data['type'];
 
-        if (_type != 'assign' && _type != 'new_order' /*&& _type != 'order_request'*/) {
+        if (type != 'assign' && type != 'new_order' && type != 'order_request') {
           NotificationHelper.showNotification(message, flutterLocalNotificationsPlugin);
           Get.find<OrderController>().getCurrentOrders();
           Get.find<OrderController>().getLatestOrders();
@@ -84,59 +87,61 @@ class NotificationHelper {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("onOpenApp: ${message.notification.title}/${message.notification.body}/${message.notification.titleLocKey}");
-      print("onOpenApp message type:${message.data['type']}");
+      if (kDebugMode) {
+        print("onOpenApp: ${message.notification!.title}/${message.notification!.body}/${message.notification!.titleLocKey}");
+        print("onOpenApp message type:${message.data['type']}");
+      }
       try{
-        if(message.data != null || message.data.isNotEmpty){
+        if(/*message.data != null || */message.data.isNotEmpty){
 
-          NotificationBody _notificationBody = convertNotification(message.data);
+          NotificationBody notificationBody = convertNotification(message.data)!;
 
-          if(_notificationBody.notificationType == NotificationType.order){
+          if(notificationBody.notificationType == NotificationType.order){
             Get.toNamed(RouteHelper.getOrderDetailsRoute(int.parse(message.data['order_id'])));
           }
-          else if(_notificationBody.notificationType == NotificationType.order_request){
+          else if(notificationBody.notificationType == NotificationType.order_request){
             Get.toNamed(RouteHelper.getMainRoute('order-request'));
           }
-          else if(_notificationBody.notificationType == NotificationType.general){
+          else if(notificationBody.notificationType == NotificationType.general){
             Get.toNamed(RouteHelper.getNotificationRoute());
           }
           else{
-            Get.toNamed(RouteHelper.getChatRoute(notificationBody: _notificationBody, conversationId: _notificationBody.conversationId));
+            Get.toNamed(RouteHelper.getChatRoute(notificationBody: notificationBody, conversationId: notificationBody.conversationId));
           }
         }
-      }catch (e) {}
+      }catch (_) {}
     });
   }
 
   static Future<void> showNotification(RemoteMessage message, FlutterLocalNotificationsPlugin fln) async {
     if(!GetPlatform.isIOS) {
-      String _title;
-      String _body;
-      String _image;
-      NotificationBody _notificationBody;
+      String? title;
+      String? body;
+      String? image;
+      NotificationBody? notificationBody;
 
-      _title = message.notification.title;
-      _body = message.notification.body;
-      _notificationBody = convertNotification(message.data);
+      title = message.notification!.title;
+      body = message.notification!.body;
+      notificationBody = convertNotification(message.data);
 
       if(GetPlatform.isAndroid) {
-        _image = (message.notification.android.imageUrl != null && message.notification.android.imageUrl.isNotEmpty)
-            ? message.notification.android.imageUrl.startsWith('http') ? message.notification.android.imageUrl
-            : '${AppConstants.BASE_URL}/storage/app/public/notification/${message.notification.android.imageUrl}' : null;
+        image = (message.notification!.android!.imageUrl != null && message.notification!.android!.imageUrl!.isNotEmpty)
+            ? message.notification!.android!.imageUrl!.startsWith('http') ? message.notification!.android!.imageUrl
+            : '${AppConstants.baseUrl}/storage/app/public/notification/${message.notification!.android!.imageUrl}' : null;
       }else if(GetPlatform.isIOS) {
-        _image = (message.notification.apple.imageUrl != null && message.notification.apple.imageUrl.isNotEmpty)
-            ? message.notification.apple.imageUrl.startsWith('http') ? message.notification.apple.imageUrl
-            : '${AppConstants.BASE_URL}/storage/app/public/notification/${message.notification.apple.imageUrl}' : null;
+        image = (message.notification!.apple!.imageUrl != null && message.notification!.apple!.imageUrl!.isNotEmpty)
+            ? message.notification!.apple!.imageUrl!.startsWith('http') ? message.notification!.apple!.imageUrl
+            : '${AppConstants.baseUrl}/storage/app/public/notification/${message.notification!.apple!.imageUrl}' : null;
       }
 
-      if(_image != null && _image.isNotEmpty /*&& _notificationBody.notificationType != NotificationType.message*/) {
+      if(image != null && image.isNotEmpty /*&& _notificationBody.notificationType != NotificationType.message*/) {
         try{
-          await showBigPictureNotificationHiddenLargeIcon(_title, _body, _notificationBody, _image, fln);
+          await showBigPictureNotificationHiddenLargeIcon(title, body, notificationBody, image, fln);
         }catch(e) {
-          await showBigTextNotification(_title, _body, _notificationBody, fln);
+          await showBigTextNotification(title, body!, notificationBody, fln);
         }
       }else {
-        await showBigTextNotification(_title, _body, _notificationBody, fln);
+        await showBigTextNotification(title, body!, notificationBody, fln);
       }
     }
   }
@@ -147,10 +152,10 @@ class NotificationHelper {
       importance: Importance.max, priority: Priority.max, sound: RawResourceAndroidNotificationSound('notification'),
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-    await fln.show(0, title, body, platformChannelSpecifics, payload: notificationBody != null ? jsonEncode(notificationBody.toJson()) : null);
+    await fln.show(0, title, body, platformChannelSpecifics, payload: jsonEncode(notificationBody.toJson()));
   }
 
-  static Future<void> showBigTextNotification(String title, String body, NotificationBody notificationBody, FlutterLocalNotificationsPlugin fln) async {
+  static Future<void> showBigTextNotification(String? title, String body, NotificationBody? notificationBody, FlutterLocalNotificationsPlugin fln) async {
     BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
       body, htmlFormatBigText: true,
       contentTitle: title, htmlFormatContentTitle: true,
@@ -158,13 +163,13 @@ class NotificationHelper {
     AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       '6ammart', '6ammart', importance: Importance.max,
       styleInformation: bigTextStyleInformation, priority: Priority.max, playSound: true,
-      sound: RawResourceAndroidNotificationSound('notification'),
+      sound: const RawResourceAndroidNotificationSound('notification'),
     );
     NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
     await fln.show(0, title, body, platformChannelSpecifics, payload: notificationBody != null ? jsonEncode(notificationBody.toJson()) : null);
   }
 
-  static Future<void> showBigPictureNotificationHiddenLargeIcon(String title, String body, NotificationBody notificationBody, String image, FlutterLocalNotificationsPlugin fln) async {
+  static Future<void> showBigPictureNotificationHiddenLargeIcon(String? title, String? body, NotificationBody? notificationBody, String image, FlutterLocalNotificationsPlugin fln) async {
     final String largeIconPath = await _downloadAndSaveFile(image, 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(image, 'bigPicture');
     final BigPictureStyleInformation bigPictureStyleInformation = BigPictureStyleInformation(
@@ -176,7 +181,7 @@ class NotificationHelper {
       '6ammart', '6ammart',
       largeIcon: FilePathAndroidBitmap(largeIconPath), priority: Priority.max, playSound: true,
       styleInformation: bigPictureStyleInformation, importance: Importance.max,
-      sound: RawResourceAndroidNotificationSound('notification'),
+      sound: const RawResourceAndroidNotificationSound('notification'),
     );
     final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
     await fln.show(0, title, body, platformChannelSpecifics, payload: notificationBody != null ? jsonEncode(notificationBody.toJson()) : null);
@@ -191,7 +196,7 @@ class NotificationHelper {
     return filePath;
   }
 
-  static NotificationBody convertNotification(Map<String, dynamic> data){
+  static NotificationBody? convertNotification(Map<String, dynamic> data){
     if(data['type'] == 'general'){
       return NotificationBody(notificationType: NotificationType.general) ;
     }
@@ -215,7 +220,9 @@ class NotificationHelper {
 }
 
 Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
-  print("onBackground: ${message.notification.title}/${message.notification.body}/${message.notification.titleLocKey}");
+  if (kDebugMode) {
+    print("onBackground: ${message.notification!.title}/${message.notification!.body}/${message.notification!.titleLocKey}");
+  }
   // var androidInitialize = new AndroidInitializationSettings('notification_icon');
   // var iOSInitialize = new IOSInitializationSettings();
   // var initializationsSettings = new InitializationSettings(android: androidInitialize, iOS: iOSInitialize);

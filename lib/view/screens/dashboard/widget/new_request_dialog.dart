@@ -13,21 +13,20 @@ class NewRequestDialog extends StatefulWidget {
   final bool isRequest;
   final Function onTap;
   final int orderId;
-  NewRequestDialog({@required this.isRequest, @required this.onTap, @required this.orderId});
+  const NewRequestDialog({Key? key, required this.isRequest, required this.onTap, required this.orderId}) : super(key: key);
 
   @override
   State<NewRequestDialog> createState() => _NewRequestDialogState();
 }
 
 class _NewRequestDialogState extends State<NewRequestDialog> {
-  Timer _timer;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
 
     _startAlarm();
-    print('============${widget.orderId}');
     Get.find<OrderController>().getOrderDetails(widget.orderId, false);
   }
 
@@ -39,64 +38,64 @@ class _NewRequestDialogState extends State<NewRequestDialog> {
   }
 
   void _startAlarm() {
-    AudioCache _audio = AudioCache();
-    _audio.play('notification.mp3');
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
-      _audio.play('notification.mp3');
+    AudioCache audio = AudioCache();
+    audio.play('notification.mp3');
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      audio.play('notification.mp3');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.radiusSmall)),
       //insetPadding: EdgeInsets.all(Dimensions.PADDING_SIZE_LARGE),
       child: Padding(
-        padding: EdgeInsets.all(Dimensions.PADDING_SIZE_LARGE),
+        padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
         child: GetBuilder<OrderController>(
           builder: (orderController) {
             return Column(mainAxisSize: MainAxisSize.min, children: [
 
-              Image.asset(Images.notification_in, height: 60, color: Theme.of(context).primaryColor),
+              Image.asset(Images.notificationIn, height: 60, color: Theme.of(context).primaryColor),
 
               Padding(
-                padding: EdgeInsets.all(Dimensions.PADDING_SIZE_LARGE),
+                padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
                 child: Text(
                   widget.isRequest ? 'new_order_request_from_a_customer'.tr : 'you_have_assigned_a_new_order'.tr, textAlign: TextAlign.center,
-                  style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE),
+                  style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeLarge),
                 ),
               ),
 
               orderController.orderDetailsModel != null ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('with'.tr , textAlign: TextAlign.center, style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_DEFAULT)),
+                Text('with'.tr , textAlign: TextAlign.center, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeDefault)),
                 Text(
-                  ' ${orderController.orderDetailsModel != null ? orderController.orderDetailsModel.length.toString() : 0} ',
-                  textAlign: TextAlign.center, style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE),
+                  ' ${orderController.orderDetailsModel != null ? orderController.orderDetailsModel!.length.toString() : 0} ',
+                  textAlign: TextAlign.center, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge),
                 ),
-                Text('items'.tr, textAlign: TextAlign.center, style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_DEFAULT)),
-              ]) : SizedBox(),
+                Text('items'.tr, textAlign: TextAlign.center, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeDefault)),
+              ]) : const SizedBox(),
 
               orderController.orderDetailsModel != null ? ListView.builder(
-                  itemCount: orderController.orderDetailsModel.length,
+                  itemCount: orderController.orderDetailsModel!.length,
                   shrinkWrap: true,
-                  padding: EdgeInsets.symmetric(vertical: Dimensions.PADDING_SIZE_SMALL),
+                  padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeSmall),
                   itemBuilder: (context,index){
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+                      padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeExtraSmall),
                       child: Row(children: [
-                        Text('item'.tr + ' ${index + 1}: ', style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL)),
+                        Text('${'item'.tr} ${index + 1}: ', style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall)),
                         Flexible(child: Text(
-                            orderController.orderDetailsModel[index].itemDetails.name + ' ( x ' +'${orderController.orderDetailsModel[index].quantity})',
-                            maxLines: 2, overflow: TextOverflow.ellipsis, style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL)),
+                            '${orderController.orderDetailsModel![index].itemDetails!.name!} ( x ${orderController.orderDetailsModel![index].quantity})',
+                            maxLines: 2, overflow: TextOverflow.ellipsis, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall)),
                         ),
                       ]),
                     );
-                  }) : SizedBox(),
+                  }) : const SizedBox(),
 
               CustomButton(
                 height: 40,
                 buttonText: widget.isRequest ? (Get.find<OrderController>().currentOrderList != null
-                    && Get.find<OrderController>().currentOrderList.length > 0) ? 'ok'.tr : 'go'.tr : 'ok'.tr,
+                    && Get.find<OrderController>().currentOrderList!.isNotEmpty) ? 'ok'.tr : 'go'.tr : 'ok'.tr,
                 onPressed: () {
                   if(!widget.isRequest) {
                     _timer?.cancel();

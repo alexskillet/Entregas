@@ -1,4 +1,4 @@
-import 'package:country_code_picker/country_code.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:sixam_mart_delivery/controller/auth_controller.dart';
 import 'package:sixam_mart_delivery/controller/localization_controller.dart';
 import 'package:sixam_mart_delivery/controller/splash_controller.dart';
@@ -9,7 +9,6 @@ import 'package:sixam_mart_delivery/util/styles.dart';
 import 'package:sixam_mart_delivery/view/base/custom_button.dart';
 import 'package:sixam_mart_delivery/view/base/custom_snackbar.dart';
 import 'package:sixam_mart_delivery/view/base/custom_text_field.dart';
-import 'package:sixam_mart_delivery/view/screens/auth/widget/code_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:phone_number/phone_number.dart';
@@ -20,19 +19,21 @@ class SignInScreen extends StatelessWidget {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  SignInScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    String _countryDialCode = Get.find<AuthController>().getUserCountryCode().isNotEmpty ? Get.find<AuthController>().getUserCountryCode()
-        : CountryCode.fromCountryCode(Get.find<SplashController>().configModel.country).dialCode;
-    _phoneController.text =  Get.find<AuthController>().getUserNumber() ?? '';
-    _passwordController.text = Get.find<AuthController>().getUserPassword() ?? '';
+    String? countryDialCode = Get.find<AuthController>().getUserCountryCode().isNotEmpty ? Get.find<AuthController>().getUserCountryCode()
+        : CountryCode.fromCountryCode(Get.find<SplashController>().configModel!.country!).dialCode;
+    _phoneController.text =  Get.find<AuthController>().getUserNumber();
+    _passwordController.text = Get.find<AuthController>().getUserPassword();
 
     return Scaffold(
       body: SafeArea(child: Center(
         child: Scrollbar(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
             child: Center(
               child: SizedBox(
                 width: 1170,
@@ -43,33 +44,33 @@ class SignInScreen extends StatelessWidget {
                     Image.asset(Images.logo, width: 200),
                     // SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
                     //Center(child: Text(AppConstants.APP_NAME, style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE))),
-                    SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_LARGE),
+                    const SizedBox(height: Dimensions.paddingSizeExtraLarge),
 
                     Text('sign_in'.tr.toUpperCase(), style: robotoBlack.copyWith(fontSize: 30)),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
 
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+                        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
                         color: Theme.of(context).cardColor,
-                        boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 800 : 200], spreadRadius: 1, blurRadius: 5)],
+                        boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 800 : 200]!, spreadRadius: 1, blurRadius: 5)],
                       ),
                       child: Column(children: [
 
                         Row(children: [
-                          CodePickerWidget(
+                          CountryCodePicker(
                             onChanged: (CountryCode countryCode) {
-                              _countryDialCode = countryCode.dialCode;
+                              countryDialCode = countryCode.dialCode;
                             },
-                            initialSelection: _countryDialCode != null ? _countryDialCode : Get.find<LocalizationController>().locale.countryCode,
-                            favorite: [_countryDialCode],
+                            initialSelection: countryDialCode ?? Get.find<LocalizationController>().locale.countryCode,
+                            favorite: [countryDialCode!],
                             showDropDownButton: true,
                             padding: EdgeInsets.zero,
                             showFlagMain: true,
                             dialogBackgroundColor: Theme.of(context).cardColor,
                             flagWidth: 30,
                             textStyle: robotoRegular.copyWith(
-                              fontSize: Dimensions.FONT_SIZE_LARGE, color: Theme.of(context).textTheme.bodyLarge.color,
+                              fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).textTheme.bodyLarge!.color,
                             ),
                           ),
                           Expanded(child: CustomTextField(
@@ -91,13 +92,13 @@ class SignInScreen extends StatelessWidget {
                           prefixIcon: Images.lock,
                           isPassword: true,
                           onSubmit: (text) => GetPlatform.isWeb ? _login(
-                            authController, _phoneController, _passwordController, _countryDialCode, context,
+                            authController, _phoneController, _passwordController, countryDialCode!, context,
                           ) : null,
                         ),
 
                       ]),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
                     Row(children: [
                       Expanded(
@@ -106,7 +107,7 @@ class SignInScreen extends StatelessWidget {
                           leading: Checkbox(
                             activeColor: Theme.of(context).primaryColor,
                             value: authController.isActiveRememberMe,
-                            onChanged: (bool isChecked) => authController.toggleRememberMe(),
+                            onChanged: (bool? isChecked) => authController.toggleRememberMe(),
                           ),
                           title: Text('remember_me'.tr),
                           contentPadding: EdgeInsets.zero,
@@ -119,26 +120,26 @@ class SignInScreen extends StatelessWidget {
                         child: Text('${'forgot_password'.tr}?'),
                       ),
                     ]),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
 
                     !authController.isLoading ? CustomButton(
                       buttonText: 'sign_in'.tr,
-                      onPressed: () => _login(authController, _phoneController, _passwordController, _countryDialCode, context),
-                    ) : Center(child: CircularProgressIndicator()),
-                    SizedBox(height: Get.find<SplashController>().configModel.toggleDmRegistration ? Dimensions.PADDING_SIZE_SMALL : 0),
+                      onPressed: () => _login(authController, _phoneController, _passwordController, countryDialCode!, context),
+                    ) : const Center(child: CircularProgressIndicator()),
+                    SizedBox(height: Get.find<SplashController>().configModel!.toggleDmRegistration! ? Dimensions.paddingSizeSmall : 0),
 
-                    Get.find<SplashController>().configModel.toggleDmRegistration ? TextButton(
+                    Get.find<SplashController>().configModel!.toggleDmRegistration! ? TextButton(
                       style: TextButton.styleFrom(
-                        minimumSize: Size(1, 40),
+                        minimumSize: const Size(1, 40),
                       ),
                       onPressed: () {
                         Get.toNamed(RouteHelper.getDeliverymanRegistrationRoute());
                       },
                       child: RichText(text: TextSpan(children: [
                         TextSpan(text: '${'join_as_a'.tr} ', style: robotoRegular.copyWith(color: Theme.of(context).disabledColor)),
-                        TextSpan(text: 'delivery_man'.tr, style: robotoMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge.color)),
+                        TextSpan(text: 'delivery_man'.tr, style: robotoMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color)),
                       ])),
-                    ) : SizedBox(),
+                    ) : const SizedBox(),
 
                   ]);
                 }),
@@ -150,31 +151,31 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
-  void _login(AuthController authController, TextEditingController phoneCtlr, TextEditingController passCtlr, String countryCode, BuildContext context) async {
-    String _phone = phoneCtlr.text.trim();
-    String _password = passCtlr.text.trim();
+  void _login(AuthController authController, TextEditingController phoneText, TextEditingController passText, String countryCode, BuildContext context) async {
+    String phone = phoneText.text.trim();
+    String password = passText.text.trim();
 
-    String _numberWithCountryCode = countryCode+_phone;
-    bool _isValid = false;
+    String numberWithCountryCode = countryCode+phone;
+    bool isValid = false;
     try {
-      PhoneNumber phoneNumber = await PhoneNumberUtil().parse(_numberWithCountryCode);
-      _numberWithCountryCode = '+'+phoneNumber.countryCode+phoneNumber.nationalNumber;
-      _isValid = true;
-    }catch(e) {}
+      PhoneNumber phoneNumber = await PhoneNumberUtil().parse(numberWithCountryCode);
+      numberWithCountryCode = '+${phoneNumber.countryCode}${phoneNumber.nationalNumber}';
+      isValid = true;
+    }catch(_) {}
 
-    if (_phone.isEmpty) {
+    if (phone.isEmpty) {
       showCustomSnackBar('enter_phone_number'.tr);
-    }else if (!_isValid) {
+    }else if (!isValid) {
       showCustomSnackBar('invalid_phone_number'.tr);
-    }else if (_password.isEmpty) {
+    }else if (password.isEmpty) {
       showCustomSnackBar('enter_password'.tr);
-    }else if (_password.length < 6) {
+    }else if (password.length < 6) {
       showCustomSnackBar('password_should_be'.tr);
     }else {
-      authController.login(_numberWithCountryCode, _password).then((status) async {
+      authController.login(numberWithCountryCode, password).then((status) async {
         if (status.isSuccess) {
           if (authController.isActiveRememberMe) {
-            authController.saveUserNumberAndPassword(_phone, _password, countryCode);
+            authController.saveUserNumberAndPassword(phone, password, countryCode);
           } else {
             authController.clearUserNumberAndPassword();
           }

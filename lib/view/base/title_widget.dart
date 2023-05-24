@@ -5,24 +5,24 @@ import 'package:get/get.dart';
 
 class TitleWidget extends StatelessWidget {
   final String title;
-  final Function onTap;
+  final Function? onTap;
 
-  TitleWidget({@required this.title, this.onTap});
+  const TitleWidget({Key? key, required this.title, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Text(title, style: robotoMedium),
       onTap != null ? InkWell(
-        onTap: onTap,
+        onTap: onTap as void Function()?,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
+          padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
           child: Text(
             'view_all'.tr,
-            style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL, color: Theme.of(context).primaryColor),
+            style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
           ),
         ),
-      ) : SizedBox(),
+      ) : const SizedBox(),
     ]);
   }
 }

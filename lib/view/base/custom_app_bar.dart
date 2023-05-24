@@ -7,27 +7,27 @@ import 'package:flutter/material.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool isBackButtonExist;
-  final Function onBackPressed;
-  CustomAppBar({@required this.title, this.isBackButtonExist = true, this.onBackPressed});
+  final Function? onBackPressed;
+  const CustomAppBar({Key? key, required this.title, this.isBackButtonExist = true, this.onBackPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title, style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE, color: Theme.of(context).textTheme.bodyLarge.color)),
+      title: Text(title, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).textTheme.bodyLarge!.color)),
       centerTitle: true,
       leading: isBackButtonExist ? IconButton(
-        icon: Icon(Icons.arrow_back_ios),
-        color: Theme.of(context).textTheme.bodyLarge.color,
+        icon: const Icon(Icons.arrow_back_ios),
+        color: Theme.of(context).textTheme.bodyLarge!.color,
         onPressed: (){
          if(onBackPressed != null){
-           onBackPressed();
+           onBackPressed!();
          }else if(Get.previousRoute.isNotEmpty){
            Get.back();
          }else{
            Get.offAllNamed(RouteHelper.getInitialRoute());
          }
         } ,
-      ) : SizedBox(),
+      ) : const SizedBox(),
       backgroundColor: Theme.of(context).cardColor,
       elevation: 0,
     );

@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
@@ -33,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
       body: GetBuilder<AuthController>(builder: (authController) {
-        return authController.profileModel == null ? Center(child: CircularProgressIndicator()) : ProfileBgWidget(
+        return authController.profileModel == null ? const Center(child: CircularProgressIndicator()) : ProfileBgWidget(
           backButton: false,
           circularImage: Container(
             decoration: BoxDecoration(
@@ -42,33 +44,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             alignment: Alignment.center,
             child: ClipOval(child: CustomImage(
-              image: '${Get.find<SplashController>().configModel.baseUrls.deliveryManImageUrl}'
-                  '/${authController.profileModel != null ? authController.profileModel.image : ''}',
+              image: '${Get.find<SplashController>().configModel!.baseUrls!.deliveryManImageUrl}'
+                  '/${authController.profileModel != null ? authController.profileModel!.image : ''}',
               height: 100, width: 100, fit: BoxFit.cover,
             )),
           ),
-          mainWidget: SingleChildScrollView(physics: BouncingScrollPhysics(), child: Center(child: Container(
+          mainWidget: SingleChildScrollView(physics: const BouncingScrollPhysics(), child: Center(child: Container(
             width: 1170, color: Theme.of(context).cardColor,
-            padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+            padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
             child: Column(children: [
 
               Text(
-                '${authController.profileModel.fName} ${authController.profileModel.lName}',
-                style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE),
+                '${authController.profileModel!.fName} ${authController.profileModel!.lName}',
+                style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               Row(children: [
-                ProfileCard(title: 'since_joining'.tr, data: '${authController.profileModel.memberSinceDays} ${'days'.tr}'),
-                SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
-                ProfileCard(title: 'total_order'.tr, data: authController.profileModel.orderCount.toString()),
+                ProfileCard(title: 'since_joining'.tr, data: '${authController.profileModel!.memberSinceDays} ${'days'.tr}'),
+                const SizedBox(width: Dimensions.paddingSizeSmall),
+                ProfileCard(title: 'total_order'.tr, data: authController.profileModel!.orderCount.toString()),
               ]),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               ProfileButton(icon: Icons.dark_mode, title: 'dark_mode'.tr, isButtonActive: Get.isDarkMode, onTap: () {
                 Get.find<ThemeController>().toggleTheme();
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(
                 icon: Icons.notifications, title: 'notification'.tr,
@@ -76,37 +78,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   authController.setNotificationActive(!authController.notification);
                 },
               ),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(icon: Icons.chat_bubble, title: 'conversation'.tr, onTap: () {
                 Get.toNamed(RouteHelper.getConversationListRoute());
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(icon: Icons.language, title: 'Language'.tr, onTap: () {
                 Get.toNamed(RouteHelper.getLanguageRoute());
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(icon: Icons.lock, title: 'change_password'.tr, onTap: () {
                 Get.toNamed(RouteHelper.getResetPasswordRoute('', '', 'password-change'));
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(icon: Icons.edit, title: 'edit_profile'.tr, onTap: () {
                 Get.toNamed(RouteHelper.getUpdateProfileRoute());
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(icon: Icons.list, title: 'terms_condition'.tr, onTap: () {
                 Get.toNamed(RouteHelper.getTermsRoute());
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(icon: Icons.privacy_tip, title: 'privacy_policy'.tr, onTap: () {
                 Get.toNamed(RouteHelper.getPrivacyRoute());
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(
                 icon: Icons.delete, title: 'delete_account'.tr,
@@ -117,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       useSafeArea: false);
                 },
               ),
-              SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
 
               ProfileButton(icon: Icons.logout, title: 'logout'.tr, onTap: () {
                 Get.back();
@@ -127,12 +129,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Get.offAllNamed(RouteHelper.getSignInRoute());
                 }));
               }),
-              SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
+              const SizedBox(height: Dimensions.paddingSizeLarge),
 
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('${'version'.tr}:', style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL)),
-                SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
-                Text(AppConstants.APP_VERSION.toString(), style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL)),
+                Text('${'version'.tr}:', style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
+                const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                Text(AppConstants.appVersion.toString(), style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
               ]),
 
             ]),

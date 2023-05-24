@@ -6,22 +6,22 @@ import 'package:get/get.dart';
 
 class MyTextField extends StatefulWidget {
   final String hintText;
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final FocusNode nextFocus;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocus;
   final TextInputType inputType;
   final TextInputAction inputAction;
   final int maxLines;
   final bool isPassword;
-  final Function onTap;
-  final Function onChanged;
-  final Function onSubmit;
+  final Function? onTap;
+  final Function? onChanged;
+  final Function? onSubmit;
   final bool isEnabled;
   final TextCapitalization capitalization;
-  final Color fillColor;
+  final Color? fillColor;
 
-  MyTextField(
-      {this.hintText = '',
+  const MyTextField(
+      {Key? key, this.hintText = '',
         this.controller,
         this.focusNode,
         this.nextFocus,
@@ -34,20 +34,20 @@ class MyTextField extends StatefulWidget {
         this.capitalization = TextCapitalization.none,
         this.onTap,
         this.fillColor,
-        this.isPassword = false});
+        this.isPassword = false}) : super(key: key);
 
   @override
-  _MyTextFieldState createState() => _MyTextFieldState();
+  MyTextFieldState createState() => MyTextFieldState();
 }
 
-class _MyTextFieldState extends State<MyTextField> {
+class MyTextFieldState extends State<MyTextField> {
   bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 800 : 200], spreadRadius: 2, blurRadius: 5, offset: Offset(0, 5))],
+        boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 800 : 200]!, spreadRadius: 2, blurRadius: 5, offset: const Offset(0, 5))],
       ),
       child: TextField(
         maxLines: widget.maxLines,
@@ -67,18 +67,18 @@ class _MyTextFieldState extends State<MyTextField> {
           hintText: widget.hintText,
           isDense: true,
           filled: true,
-          fillColor: widget.fillColor != null ? widget.fillColor : Theme.of(context).cardColor,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL), borderSide: BorderSide.none),
+          fillColor: widget.fillColor ?? Theme.of(context).cardColor,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(Dimensions.radiusSmall), borderSide: BorderSide.none),
           hintStyle: robotoRegular.copyWith(color: Theme.of(context).hintColor),
           suffixIcon: widget.isPassword ? IconButton(
             icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Theme.of(context).hintColor.withOpacity(0.3)),
             onPressed: _toggle,
           ) : null,
         ),
-        onTap: widget.onTap,
+        onTap: widget.onTap as void Function()?,
         onSubmitted: (text) => widget.nextFocus != null ? FocusScope.of(context).requestFocus(widget.nextFocus)
-            : widget.onSubmit != null ? widget.onSubmit(text) : null,
-        onChanged: widget.onChanged,
+            : widget.onSubmit != null ? widget.onSubmit!(text) : null,
+        onChanged: widget.onChanged as void Function(String)?,
       ),
     );
   }

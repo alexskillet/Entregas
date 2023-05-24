@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class OrderScreen extends StatelessWidget {
+  const OrderScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
@@ -14,47 +16,47 @@ class OrderScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(title: 'my_orders'.tr, isBackButtonExist: false),
       body: GetBuilder<OrderController>(builder: (orderController) {
-        scrollController?.addListener(() {
+        scrollController.addListener(() {
           if (scrollController.position.pixels == scrollController.position.maxScrollExtent
               && orderController.completedOrderList != null
               && !Get.find<OrderController>().paginate) {
-            int pageSize = (Get.find<OrderController>().pageSize / 10).ceil();
+            int pageSize = (Get.find<OrderController>().pageSize! / 10).ceil();
             if (Get.find<OrderController>().offset < pageSize) {
               Get.find<OrderController>().setOffset(Get.find<OrderController>().offset+1);
-              print('end of the page');
+              debugPrint('end of the page');
               Get.find<OrderController>().showBottomLoader();
               Get.find<OrderController>().getCompletedOrders(Get.find<OrderController>().offset);
             }
           }
         });
 
-        return orderController.completedOrderList != null ? orderController.completedOrderList.length > 0 ? RefreshIndicator(
+        return orderController.completedOrderList != null ? orderController.completedOrderList!.isNotEmpty ? RefreshIndicator(
           onRefresh: () async {
             await orderController.getCompletedOrders(1);
           },
           child: Scrollbar(child: SingleChildScrollView(
             controller: scrollController,
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Center(child: SizedBox(
               width: 1170,
               child: Column(children: [
                 ListView.builder(
-                  padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
-                  itemCount: orderController.completedOrderList.length,
-                  physics: NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                  itemCount: orderController.completedOrderList!.length,
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return HistoryOrderWidget(orderModel: orderController.completedOrderList[index], isRunning: false, index: index);
+                    return HistoryOrderWidget(orderModel: orderController.completedOrderList![index], isRunning: false, index: index);
                   },
                 ),
-                orderController.paginate ? Center(child: Padding(
-                  padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+                orderController.paginate ? const Center(child: Padding(
+                  padding: EdgeInsets.all(Dimensions.paddingSizeSmall),
                   child: CircularProgressIndicator(),
-                )) : SizedBox(),
+                )) : const SizedBox(),
               ]),
             )),
           )),
-        ) : Center(child: Text('no_order_found'.tr)) : Center(child: CircularProgressIndicator());
+        ) : Center(child: Text('no_order_found'.tr)) : const Center(child: CircularProgressIndicator());
       }),
     );
   }

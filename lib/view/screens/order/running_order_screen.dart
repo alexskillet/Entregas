@@ -6,32 +6,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RunningOrderScreen extends StatelessWidget {
+  const RunningOrderScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: 'running_orders'.tr),
       body: GetBuilder<OrderController>(builder: (orderController) {
 
-        return orderController.currentOrderList != null ? orderController.currentOrderList.length > 0 ? RefreshIndicator(
+        return orderController.currentOrderList != null ? orderController.currentOrderList!.isNotEmpty ? RefreshIndicator(
           onRefresh: () async {
             await orderController.getCurrentOrders();
           },
           child: Scrollbar(child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Center(child: SizedBox(
               width: 1170,
               child: ListView.builder(
-                padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
-                itemCount: orderController.currentOrderList.length,
-                physics: NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                itemCount: orderController.currentOrderList!.length,
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  return HistoryOrderWidget(orderModel: orderController.currentOrderList[index], isRunning: true, index: index);
+                  return HistoryOrderWidget(orderModel: orderController.currentOrderList![index], isRunning: true, index: index);
                 },
               ),
             )),
           )),
-        ) : Center(child: Text('no_order_found'.tr)) : Center(child: CircularProgressIndicator());
+        ) : Center(child: Text('no_order_found'.tr)) : const Center(child: CircularProgressIndicator());
       }),
     );
   }

@@ -56,13 +56,13 @@ class DateConverter {
   }
 
   static int timeDistanceInMin(String time) {
-    DateTime _currentTime = Get.find<SplashController>().currentTime;
-    DateTime _rangeTime = dateTimeStringToDate(time);
-    return _currentTime.difference(_rangeTime).inMinutes;
+    DateTime currentTime = Get.find<SplashController>().currentTime;
+    DateTime rangeTime = dateTimeStringToDate(time);
+    return currentTime.difference(rangeTime).inMinutes;
   }
 
   static String _timeFormatter() {
-    return Get.find<SplashController>().configModel.timeformat == '24' ? 'HH:mm' : 'hh:mm a';
+    return Get.find<SplashController>().configModel!.timeformat == '24' ? 'HH:mm' : 'hh:mm a';
   }
 
   static String localDateToIsoStringAMPM(DateTime dateTime) {

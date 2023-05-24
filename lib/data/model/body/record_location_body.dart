@@ -1,8 +1,8 @@
 class RecordLocationBody {
-  String token;
-  double longitude;
-  double latitude;
-  String location;
+  String? token;
+  double? longitude;
+  double? latitude;
+  String? location;
 
   RecordLocationBody({this.token, this.longitude, this.latitude, this.location});
 
@@ -14,11 +14,11 @@ class RecordLocationBody {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['token'] = this.token;
-    data['longitude'] = this.longitude;
-    data['latitude'] = this.latitude;
-    data['location'] = this.location;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['token'] = token;
+    data['longitude'] = longitude;
+    data['latitude'] = latitude;
+    data['location'] = location;
     return data;
   }
 }

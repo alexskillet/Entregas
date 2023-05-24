@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:sixam_mart_delivery/controller/auth_controller.dart';
 import 'package:sixam_mart_delivery/controller/order_controller.dart';
 import 'package:sixam_mart_delivery/helper/notification_helper.dart';
@@ -20,18 +21,18 @@ import 'package:get/get.dart';
 
 class DashboardScreen extends StatefulWidget {
   final int pageIndex;
-  DashboardScreen({@required this.pageIndex});
+  const DashboardScreen({Key? key, required this.pageIndex}) : super(key: key);
 
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  DashboardScreenState createState() => DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  PageController _pageController;
+class DashboardScreenState extends State<DashboardScreen> {
+  PageController? _pageController;
   int _pageIndex = 0;
-  List<Widget> _screens;
+  late List<Widget> _screens;
   final _channel = const MethodChannel('com.sixamtech/app_retain');
-  StreamSubscription _stream;
+  late StreamSubscription _stream;
   //Timer _timer;
   //int _orderCount;
 
@@ -44,39 +45,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _pageController = PageController(initialPage: widget.pageIndex);
 
     _screens = [
-      HomeScreen(),
+      const HomeScreen(),
       OrderRequestScreen(onTap: () => _setPage(0)),
-      OrderScreen(),
-      ProfileScreen(),
+      const OrderScreen(),
+      const ProfileScreen(),
     ];
 
-    print('dashboard call');
+    if (kDebugMode) {
+      print('dashboard call');
+    }
     _stream = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // if(Get.find<OrderController>().latestOrderList != null) {
       //   _orderCount = Get.find<OrderController>().latestOrderList.length;
       // }
-      print("dashboard onMessage: ${message.data}/ ${message.data['type']}");
-      String _type = message.notification.bodyLocKey;
-      String _orderID = message.notification.titleLocKey;
-      if(_type != 'assign' && _type != 'new_order' && _type != 'message' && _type != 'order_request'&& _type != 'order_status') {
+      if (kDebugMode) {
+        print("dashboard onMessage: ${message.data}/ ${message.data['type']}");
+      }
+      String? type = message.notification!.bodyLocKey;
+      String? orderID = message.notification!.titleLocKey;
+      if(type != 'assign' && type != 'new_order' && type != 'message' && type != 'order_request' && type != 'order_status') {
         NotificationHelper.showNotification(message, flutterLocalNotificationsPlugin);
       }
       /*Get.find<OrderController>().getCurrentOrders();
       Get.find<OrderController>().getLatestOrders();*/
       //Get.find<OrderController>().getAllOrders();
-      if(_type == 'new_order') {
+      if(type == 'new_order' || type == 'order_request') {
         //_orderCount = _orderCount + 1;
         Get.find<OrderController>().getCurrentOrders();
         Get.find<OrderController>().getLatestOrders();
         Get.dialog(NewRequestDialog(isRequest: true, onTap: () => _navigateRequestPage(), orderId: int.parse(message.data['order_id'].toString())));
-      }else if(_type == 'assign' && _orderID != null && _orderID.isNotEmpty) {
+      }else if(type == 'assign' && orderID != null && orderID.isNotEmpty) {
         Get.find<OrderController>().getCurrentOrders();
         Get.find<OrderController>().getLatestOrders();
         Get.dialog(NewRequestDialog(isRequest: false, orderId: int.parse(message.data['order_id'].toString()), onTap: () {
           // _setPage(0);
-          Get.offAllNamed(RouteHelper.getOrderDetailsRoute(int.parse(_orderID), fromNotification: true));
+          Get.offAllNamed(RouteHelper.getOrderDetailsRoute(int.parse(orderID), fromNotification: true));
         }));
-      }else if(_type == 'block') {
+      }else if(type == 'block') {
         Get.find<AuthController>().clearSharedData();
         Get.find<AuthController>().stopLocationRecord();
         Get.offAllNamed(RouteHelper.getSignInRoute());
@@ -102,11 +107,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // }
 
   void _navigateRequestPage() {
-    if(Get.find<AuthController>().profileModel != null && Get.find<AuthController>().profileModel.active == 1
-        && Get.find<OrderController>().currentOrderList != null && Get.find<OrderController>().currentOrderList.length < 1) {
+    if(Get.find<AuthController>().profileModel != null && Get.find<AuthController>().profileModel!.active == 1
+        && Get.find<OrderController>().currentOrderList != null && Get.find<OrderController>().currentOrderList!.isEmpty) {
       _setPage(1);
     }else {
-      if(Get.find<AuthController>().profileModel == null || Get.find<AuthController>().profileModel.active == 0) {
+      if(Get.find<AuthController>().profileModel == null || Get.find<AuthController>().profileModel!.active == 0) {
         Get.dialog(CustomAlertDialog(description: 'you_are_offline_now'.tr, onOkPressed: () => Get.back()));
       }else {
         //Get.dialog(CustomAlertDialog(description: 'you_have_running_order'.tr, onOkPressed: () => Get.back()));
@@ -130,7 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _setPage(0);
           return false;
         }else {
-          if (GetPlatform.isAndroid && Get.find<AuthController>().profileModel.active == 1) {
+          if (GetPlatform.isAndroid && Get.find<AuthController>().profileModel!.active == 1) {
             _channel.invokeMethod('sendToBackground');
             return false;
           } else {
@@ -139,13 +144,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }
       },
       child: Scaffold(
-        bottomNavigationBar: GetPlatform.isDesktop ? SizedBox() : BottomAppBar(
+        bottomNavigationBar: GetPlatform.isDesktop ? const SizedBox() : BottomAppBar(
           elevation: 5,
           notchMargin: 5,
-          shape: CircularNotchedRectangle(),
+          shape: const CircularNotchedRectangle(),
 
           child: Padding(
-            padding: EdgeInsets.all(Dimensions.PADDING_SIZE_EXTRA_SMALL),
+            padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
             child: Row(children: [
               BottomNavItem(iconData: Icons.home, isSelected: _pageIndex == 0, onTap: () => _setPage(0)),
               BottomNavItem(iconData: Icons.list_alt_rounded, isSelected: _pageIndex == 1, onTap: () {
@@ -159,7 +164,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         body: PageView.builder(
           controller: _pageController,
           itemCount: _screens.length,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             return _screens[index];
           },
@@ -170,7 +175,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _setPage(int pageIndex) {
     setState(() {
-      _pageController.jumpToPage(pageIndex);
+      _pageController!.jumpToPage(pageIndex);
       _pageIndex = pageIndex;
     });
   }

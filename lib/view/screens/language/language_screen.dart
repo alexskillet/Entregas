@@ -11,6 +11,8 @@ import 'package:sixam_mart_delivery/view/base/custom_snackbar.dart';
 import 'package:get/get.dart';
 
 class ChooseLanguageScreen extends StatelessWidget {
+  const ChooseLanguageScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,8 +24,8 @@ class ChooseLanguageScreen extends StatelessWidget {
             Expanded(child: Center(
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                   child: Center(child: SizedBox(
                     width: 1170,
                     child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -31,31 +33,31 @@ class ChooseLanguageScreen extends StatelessWidget {
                       Center(child: Image.asset(Images.logo, width: 200)),
                       // SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
                       //Center(child: Text(AppConstants.APP_NAME, style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE))),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
 
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+                        padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeExtraSmall),
                         child: Text('select_language'.tr, style: robotoMedium),
                       ),
-                      SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+                      const SizedBox(height: Dimensions.paddingSizeExtraSmall),
 
                       GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: (1/1),
                         ),
                         itemCount: localizationController.languages.length,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) => LanguageWidget(
                           languageModel: localizationController.languages[index],
                           localizationController: localizationController, index: index,
                         ),
                       ),
-                      SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
+                      const SizedBox(height: Dimensions.paddingSizeLarge),
 
                       Text('you_can_change_language'.tr, style: robotoRegular.copyWith(
-                        fontSize: Dimensions.FONT_SIZE_SMALL, color: Theme.of(context).disabledColor,
+                        fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor,
                       )),
 
                     ]),
@@ -66,11 +68,11 @@ class ChooseLanguageScreen extends StatelessWidget {
 
             CustomButton(
               buttonText: 'save'.tr,
-              margin: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+              margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
               onPressed: () {
-                if(localizationController.languages.length > 0 && localizationController.selectedIndex != -1) {
+                if(localizationController.languages.isNotEmpty && localizationController.selectedIndex != -1) {
                   localizationController.setLanguage(Locale(
-                    AppConstants.languages[localizationController.selectedIndex].languageCode,
+                    AppConstants.languages[localizationController.selectedIndex].languageCode!,
                     AppConstants.languages[localizationController.selectedIndex].countryCode,
                   ));
                   Get.back();

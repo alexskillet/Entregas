@@ -14,71 +14,71 @@ class OrderWidget extends StatelessWidget {
   final OrderModel orderModel;
   final bool isRunningOrder;
   final int orderIndex;
-  OrderWidget({@required this.orderModel, @required this.isRunningOrder, @required this.orderIndex});
+  const OrderWidget({Key? key, required this.orderModel, required this.isRunningOrder, required this.orderIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool _parcel = orderModel.orderType == 'parcel';
+    bool parcel = orderModel.orderType == 'parcel';
 
     return Container(
-      margin: EdgeInsets.only(bottom: Dimensions.PADDING_SIZE_SMALL),
-      padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+      margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
+      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
-        boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 800 : 200], blurRadius: 5, spreadRadius: 1)],
+        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+        boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 800 : 200]!, blurRadius: 5, spreadRadius: 1)],
       ),
       child: Column(children: [
 
         Row(children: [
           Text(
-            '${_parcel ? 'delivery_id'.tr : 'order_id'.tr}:',
-            style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL),
+            '${parcel ? 'delivery_id'.tr : 'order_id'.tr}:',
+            style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
           ),
-          SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
-          Text('#${orderModel.id}', style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL)),
-          Expanded(child: SizedBox()),
+          const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+          Text('#${orderModel.id}', style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall)),
+          const Expanded(child: SizedBox()),
           Container(width: 7, height: 7, decoration: BoxDecoration(
             color: orderModel.paymentMethod == 'cash_on_delivery' ? Colors.red : Colors.green,
             shape: BoxShape.circle,
           )),
-          SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+          const SizedBox(width: Dimensions.paddingSizeExtraSmall),
           Text(
             orderModel.paymentMethod == 'cash_on_delivery' ? 'cod'.tr : 'digitally_paid'.tr,
-            style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL),
+            style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
           ),
         ]),
-        SizedBox(height: Dimensions.PADDING_SIZE_DEFAULT),
+        const SizedBox(height: Dimensions.paddingSizeDefault),
 
         Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-          Image.asset((_parcel || orderModel.orderStatus == 'picked_up') ? Images.user : Images.house, width: 20, height: 15),
-          SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+          Image.asset((parcel || orderModel.orderStatus == 'picked_up') ? Images.user : Images.house, width: 20, height: 15),
+          const SizedBox(width: Dimensions.paddingSizeExtraSmall),
           Expanded(child: Text(
-            _parcel ? 'customer_location'.tr : (_parcel && orderModel.orderStatus == 'picked_up') ? 'receiver_location'.tr : 'store_location'.tr,
-            style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_SMALL),
+            parcel ? 'customer_location'.tr : (parcel && orderModel.orderStatus == 'picked_up') ? 'receiver_location'.tr : 'store_location'.tr,
+            style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
             maxLines: 1, overflow: TextOverflow.ellipsis,
           )),
-          _parcel ? Container(
-            padding: EdgeInsets.all(Dimensions.PADDING_SIZE_EXTRA_SMALL),
+          parcel ? Container(
+            padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
               color: Theme.of(context).primaryColor.withOpacity(0.1),
             ),
-            child: Text('parcel'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.FONT_SIZE_EXTRA_SMALL, color: Theme.of(context).primaryColor)),
-          ) : SizedBox(),
+            child: Text('parcel'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).primaryColor)),
+          ) : const SizedBox(),
         ]),
-        SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+        const SizedBox(height: Dimensions.paddingSizeSmall),
 
         Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-          Icon(Icons.location_on, size: 20),
-          SizedBox(width: Dimensions.PADDING_SIZE_EXTRA_SMALL),
+          const Icon(Icons.location_on, size: 20),
+          const SizedBox(width: Dimensions.paddingSizeExtraSmall),
           Expanded(child: Text(
-            (_parcel && orderModel.orderStatus != 'picked_up') ? orderModel.deliveryAddress.address.toString() : (_parcel && orderModel.orderStatus == 'picked_up') ? orderModel.receiverDetails.address.toString() : orderModel.storeAddress ?? '',
-            style: robotoRegular.copyWith(color: Theme.of(context).disabledColor, fontSize: Dimensions.FONT_SIZE_SMALL),
+            (parcel && orderModel.orderStatus != 'picked_up') ? orderModel.deliveryAddress!.address.toString() : (parcel && orderModel.orderStatus == 'picked_up') ? orderModel.receiverDetails!.address.toString() : orderModel.storeAddress ?? '',
+            style: robotoRegular.copyWith(color: Theme.of(context).disabledColor, fontSize: Dimensions.fontSizeSmall),
             maxLines: 1, overflow: TextOverflow.ellipsis,
           )),
         ]),
-        SizedBox(height: Dimensions.PADDING_SIZE_DEFAULT),
+        const SizedBox(height: Dimensions.paddingSizeDefault),
 
         Row(children: [
           Expanded(child: TextButton(
@@ -88,29 +88,29 @@ class OrderWidget extends StatelessWidget {
                 arguments: OrderDetailsScreen(orderId: orderModel.id, isRunningOrder: isRunningOrder, orderIndex: orderIndex),
               );
             },
-            style: TextButton.styleFrom(minimumSize: Size(1170, 45), padding: EdgeInsets.zero, shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL), side: BorderSide(width: 2, color: Theme.of(context).disabledColor),
+            style: TextButton.styleFrom(minimumSize: const Size(1170, 45), padding: EdgeInsets.zero, shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall), side: BorderSide(width: 2, color: Theme.of(context).disabledColor),
             )),
             child: Text('details'.tr, textAlign: TextAlign.center, style: robotoBold.copyWith(
-              color: Theme.of(context).disabledColor, fontSize: Dimensions.FONT_SIZE_LARGE,
+              color: Theme.of(context).disabledColor, fontSize: Dimensions.fontSizeLarge,
             )),
           )),
-          SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+          const SizedBox(width: Dimensions.paddingSizeSmall),
           Expanded(child: CustomButton(
             height: 45,
             onPressed: () async {
-              String _url;
+              String url;
               if(orderModel.orderStatus == 'picked_up') {
-                _url = 'https://www.google.com/maps/dir/?api=1&destination=${orderModel.deliveryAddress.latitude}'
-                    ',${orderModel.deliveryAddress.longitude}&mode=d';
+                url = 'https://www.google.com/maps/dir/?api=1&destination=${orderModel.deliveryAddress!.latitude}'
+                    ',${orderModel.deliveryAddress!.longitude}&mode=d';
               }else {
-                _url = 'https://www.google.com/maps/dir/?api=1&destination=${orderModel.storeLat ?? '0'}'
+                url = 'https://www.google.com/maps/dir/?api=1&destination=${orderModel.storeLat ?? '0'}'
                     ',${orderModel.storeLng ?? '0'}&mode=d';
               }
-              if (await canLaunchUrlString(_url)) {
-                await launchUrlString(_url, mode: LaunchMode.externalApplication);
+              if (await canLaunchUrlString(url)) {
+                await launchUrlString(url, mode: LaunchMode.externalApplication);
               } else {
-                showCustomSnackBar('${'could_not_launch'.tr} $_url');
+                showCustomSnackBar('${'could_not_launch'.tr} $url');
               }
             },
             buttonText: 'direction'.tr,
